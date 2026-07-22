@@ -37,13 +37,6 @@ def _track_chart(df: pd.DataFrame) -> None:
     """Altair bar chart of certificates per track."""
     if "Track / Course" not in df.columns:
         return
-    counts = (
-        df["Track / Course"]
-        .value_counts()
-        .reset_index()
-        .columns.__setitem__(0, "Track")
-        or df["Track / Course"].value_counts().reset_index()
-    )
     counts = df["Track / Course"].value_counts().reset_index()
     counts.columns = ["Track", "Count"]
 
