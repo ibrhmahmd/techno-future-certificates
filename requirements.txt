@@ -1,7 +1,5 @@
-
 streamlit
 qrcode[pil]
 pandas
 playwright
-weasyprint
 xhtml2pdf

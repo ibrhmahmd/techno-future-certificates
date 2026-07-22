@@ -1,5 +1,4 @@
 # System dependencies for Playwright Chromium on Streamlit Cloud
-# These are the shared libraries Chromium needs on Debian/Ubuntu
 libnss3
 libatk1.0-0
 libatk-bridge2.0-0
@@ -13,5 +12,4 @@ libxrandr2
 libgbm1
 libpango-1.0-0
 libcairo2
-libasound2
 libatspi2.0-0
