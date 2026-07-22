@@ -1,0 +1,525 @@
+/*
+  ════════════════════════════════════════════════════════════════
+  CERTIFICATE TEMPLATE — Precision Engine v3.0
+  Techno Kids, Techno Future
+
+  Light & formal adaptation for official course certificates.
+  Uses track accent colors via data-track attribute.
+  ════════════════════════════════════════════════════════════════
+*/
+
+/* ─── Local Fonts (Space Grotesk + Inter) ─── */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assests/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('assests/fonts/SpaceGrotesk-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('assests/fonts/SpaceGrotesk-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('assests/fonts/SpaceGrotesk-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('assests/fonts/Inter-Light.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assests/fonts/Inter-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('assests/fonts/Inter-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('assests/fonts/Inter-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('assests/fonts/Inter-Bold.ttf') format('truetype');
+}
+
+/* ─── Design Tokens ─── */
+:root {
+  /* Core palette — light formal */
+  --primary: #0a0e1a;
+  --primary-container: #131b2e;
+  --secondary: #006a61;
+  --secondary-fixed: #89f5e7;
+  --tertiary: #7671ff;
+  --tertiary-light: #a5a1ff;
+
+  --surface: #f8f9ff;
+  --surface-container: #e5eeff;
+  --surface-container-low: #eff4ff;
+  --surface-container-lowest: #ffffff;
+
+  --on-background: #0b1c30;
+  --on-surface: #0b1c30;
+  --on-surface-muted: #5A6070;
+  --on-surface-variant: #7a8090;
+
+  /* Track accent — defaults to secondary */
+  --track-accent: #006a61;
+  --track-accent-light: #89f5e7;
+
+  /* Typography */
+  --font-heading: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  /* Spacing */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 24px rgba(11, 28, 48, 0.06);
+  --shadow-elevated: 0 12px 40px rgba(11, 28, 48, 0.08);
+}
+
+/* ─── Per-track Accent Overrides ─── */
+[data-track="html"]            { --track-accent: #c62828; --track-accent-light: #ff6659; }
+[data-track="css"]             { --track-accent: #1565c0; --track-accent-light: #5e92f3; }
+[data-track="javascript"]      { --track-accent: #f9a825; --track-accent-light: #ffd95a; }
+[data-track="python"]          { --track-accent: #2e7d32; --track-accent-light: #60ad5e; }
+[data-track="advanced"]        { --track-accent: #6a1b9a; --track-accent-light: #9c4dcc; }
+[data-track="problem_solving"] { --track-accent: #e65100; --track-accent-light: #ff833a; }
+[data-track="robotics-wedo"]           { --track-accent: #7c4dff; --track-accent-light: #b388ff; }
+[data-track="robotics-spike-essential"] { --track-accent: #00c853; --track-accent-light: #69f0ae; }
+[data-track="robotics-spike-prime"]    { --track-accent: #388e3c; --track-accent-light: #81c784; }
+[data-track="robotics-ev3"]            { --track-accent: #1976d2; --track-accent-light: #64b5f6; }
+[data-track="robotics-arduino"]        { --track-accent: #ff6d00; --track-accent-light: #ffab40; }
+[data-track="scratch"]                 { --track-accent: #ffab19; --track-accent-light: #ffc966; }
+[data-track="scratch-jr"]              { --track-accent: #4d97ff; --track-accent-light: #85b8ff; }
+
+/* ─── Page Size (WeasyPrint + browser print) ─── */
+@page {
+  size: 297mm 210mm;
+  margin: 0;
+}
+
+/* ─── Print Styles ─── */
+@media print {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .certificate-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ─── Page Setup ─── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #e8ecf2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  color: var(--on-background);
+}
+
+/* ─── Certificate Page ─── */
+.certificate-page {
+  width: 297mm;
+  height: 210mm;
+  background-color: var(--surface-container-lowest);
+  background-image: 
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--track-accent) 7%, transparent) 1.2px, transparent 1.2px),
+    url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 18h36M18 0v36' stroke='%230b1c30' stroke-width='0.5' stroke-opacity='0.025' fill='none'/%3E%3C/svg%3E");
+  background-size: 18px 18px, 36px 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ─── Accent Border Frame ─── */
+.certificate-border {
+  position: absolute;
+  inset: 8mm;
+  border: 2px solid var(--track-accent);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.certificate-border::before {
+  content: '';
+  position: absolute;
+  inset: 3mm;
+  border: 1px solid color-mix(in srgb, var(--track-accent) 30%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Corner Ornaments ─── */
+.corner-ornament {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+}
+
+.corner-ornament::before,
+.corner-ornament::after {
+  content: '';
+  position: absolute;
+  background: var(--track-accent);
+}
+
+.corner-ornament--tl { top: 12mm; left: 12mm; }
+.corner-ornament--tl::before { top: 0; left: 0; width: 28px; height: 3px; border-radius: 2px; }
+.corner-ornament--tl::after  { top: 0; left: 0; width: 3px; height: 28px; border-radius: 2px; }
+
+.corner-ornament--tr { top: 12mm; right: 12mm; }
+.corner-ornament--tr::before { top: 0; right: 0; width: 28px; height: 3px; border-radius: 2px; }
+.corner-ornament--tr::after  { top: 0; right: 0; width: 3px; height: 28px; border-radius: 2px; }
+
+.corner-ornament--bl { bottom: 12mm; left: 12mm; }
+.corner-ornament--bl::before { bottom: 0; left: 0; width: 28px; height: 3px; border-radius: 2px; }
+.corner-ornament--bl::after  { bottom: 0; left: 0; width: 3px; height: 28px; border-radius: 2px; }
+
+.corner-ornament--br { bottom: 12mm; right: 12mm; }
+.corner-ornament--br::before { bottom: 0; right: 0; width: 28px; height: 3px; border-radius: 2px; }
+.corner-ornament--br::after  { bottom: 0; right: 0; width: 3px; height: 28px; border-radius: 2px; }
+
+/* ─── Inner Content Area ─── */
+.certificate-inner {
+  position: absolute;
+  inset: 16mm;
+  display: flex;
+  flex-direction: column;
+  z-index: 3;
+}
+
+/* ─── Header: 3-Column Symmetrical Layout ─── */
+.cert-header {
+  display: grid;
+  grid-template-columns: 100px 1fr 100px;
+  align-items: center;
+  padding: 0 2mm;
+  flex-shrink: 0;
+}
+
+.cert-header-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.cert-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cert-header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cert-logo--company {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.cert-company-title {
+  font-family: var(--font-heading);
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 1mm;
+}
+
+.cert-company-sub {
+  font-family: var(--font-body);
+  font-size: 7.5pt;
+  font-weight: 500;
+  color: var(--track-accent);
+  letter-spacing: 1.5px;
+  margin-top: 0.5mm;
+}
+
+.cert-logo--track {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.cert-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cert-qr-img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 4px;
+  padding: 2px;
+  background: #ffffff;
+}
+
+.cert-qr-label {
+  font-family: var(--font-body);
+  font-size: 5.5pt;
+  color: var(--on-surface-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Title Block ─── */
+.cert-title-block {
+  text-align: center;
+  padding: 4mm 0 3mm;
+  flex-shrink: 0;
+}
+
+.cert-academy-title {
+  font-family: var(--font-heading);
+  font-size: 34pt;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.cert-title-sub {
+  font-family: var(--font-heading);
+  font-size: 13pt;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--track-accent);
+  margin-top: 1.5mm;
+}
+
+.cert-title-underline {
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--track-accent), var(--track-accent-light));
+  border-radius: 2px;
+  margin: 2.5mm auto 0;
+}
+
+/* ─── Body: Student + Course Info ─── */
+.cert-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 12mm;
+  gap: 3.5mm;
+}
+
+.cert-recipient-label {
+  font-family: var(--font-body);
+  font-size: 8.5pt;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--on-surface-muted);
+}
+
+.cert-recipient-name {
+  font-family: var(--font-heading);
+  font-size: 22pt;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.3;
+  min-width: 280px;
+  border-bottom: 2px solid var(--track-accent);
+  padding-bottom: 1.5mm;
+  display: inline-block;
+}
+
+.cert-course-name {
+  font-family: var(--font-heading);
+  font-size: 14pt;
+  font-weight: 600;
+  color: var(--track-accent);
+  margin-top: 1.5mm;
+}
+
+.cert-course-level {
+  font-family: var(--font-body);
+  font-size: 9.5pt;
+  font-weight: 500;
+  color: var(--on-surface-muted);
+  margin-top: 0.5mm;
+}
+
+.cert-description {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 400;
+  color: var(--on-surface-muted);
+  max-width: 520px;
+  line-height: 1.5;
+  margin-top: 1.5mm;
+}
+
+/* ─── Meta Row: Date & Branch (No Underlines) ─── */
+.cert-meta-row {
+  display: flex;
+  justify-content: center;
+  gap: 24mm;
+  margin-top: 3.5mm;
+  flex-shrink: 0;
+}
+
+.cert-meta-item {
+  text-align: center;
+}
+
+.cert-meta-label {
+  font-family: var(--font-body);
+  font-size: 7pt;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  margin-bottom: 0.5mm;
+}
+
+.cert-meta-value {
+  font-family: var(--font-body);
+  font-size: 10pt;
+  font-weight: 600;
+  color: var(--on-background);
+  border: none;
+  text-decoration: none;
+}
+
+/* ─── Signature Block ─── */
+.cert-signatures {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 20mm;
+  margin-top: auto;
+  padding-bottom: 2mm;
+  flex-shrink: 0;
+}
+
+.cert-signature {
+  text-align: center;
+  min-width: 140px;
+}
+
+.cert-signature-line {
+  width: 140px;
+  height: 1px;
+  background: var(--on-surface-muted);
+  margin: 0 auto 2mm;
+}
+
+.cert-signature-name {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 600;
+  color: var(--on-background);
+}
+
+.cert-signature-role {
+  font-family: var(--font-body);
+  font-size: 7.5pt;
+  font-weight: 400;
+  color: var(--on-surface-muted);
+  margin-top: 0.5mm;
+}
+
+/* ─── Footer with Single Certificate ID Badge ─── */
+.cert-footer {
+  text-align: center;
+  padding: 2mm 0 0;
+  flex-shrink: 0;
+}
+
+.cert-footer-text {
+  font-family: var(--font-body);
+  font-size: 7pt;
+  font-weight: 400;
+  color: var(--on-surface-variant);
+  letter-spacing: 0.5px;
+}
+
+.cert-id-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5pt;
+  font-weight: 500;
+  color: var(--primary);
+  background: var(--surface-container-low);
+  padding: 1.5mm 4mm;
+  border-radius: var(--radius-sm);
+  margin-top: 1mm;
+  letter-spacing: 1px;
+}
+
+/* ─── Gradient Power Bar (bottom accent) ─── */
+.cert-power-bar {
+  position: absolute;
+  bottom: 8mm;
+  left: 20mm;
+  right: 20mm;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--track-accent), var(--track-accent-light), var(--track-accent), transparent);
+  border-radius: 1px;
+  z-index: 2;
+  opacity: 0.5;
+}
