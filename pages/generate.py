@@ -9,7 +9,7 @@ import streamlit as st
 
 from core.config import LEVEL_LABELS, TRACK_DATA_ATTR, TRACK_DEFAULT_COLORS, TRACK_LOGOS
 from core.database import save_certificate
-from core.renderer import build_html, render_pdf
+from core.renderer import build_html, pdf_engine_status, render_pdf
 from core.utils import build_download_filename, generate_cert_id
 
 
@@ -68,9 +68,15 @@ def _render_preview(
                     use_container_width=True,
                 )
             except Exception:
-                st.warning(
-                    "PDF engine unavailable. Use HTML download or Ctrl+P to print."
-                )
+                status = pdf_engine_status()
+                engines = [k for k, v in status.items() if v]
+                missing = [k for k, v in status.items() if not v]
+                msg = "PDF engine unavailable."
+                if engines:
+                    msg += f" Working: {', '.join(engines)}."
+                if missing:
+                    msg += f" Missing: {', '.join(missing)}."
+                st.warning(msg + " Use HTML download or Ctrl+P to print.")
 
 
 def render() -> None:

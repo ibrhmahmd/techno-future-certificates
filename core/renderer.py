@@ -4,6 +4,7 @@ Pure Python — zero Streamlit imports.
 """
 
 import datetime
+import logging
 from io import BytesIO
 
 from core.config import (
@@ -24,6 +25,8 @@ from core.utils import (
     get_logo_base64,
     lighten_hex,
 )
+
+log = logging.getLogger(__name__)
 
 
 def build_html(
@@ -112,8 +115,36 @@ def build_html(
     )
 
 
+# ─── Playwright browser health check (cached) ───
+_playwright_ok: bool | None = None
+
+
+def _playwright_works() -> bool:
+    """Test once whether Playwright can actually launch Chromium."""
+    global _playwright_ok
+    if _playwright_ok is not None:
+        return _playwright_ok
+    if not PLAYWRIGHT_AVAILABLE:
+        _playwright_ok = False
+        return False
+    try:
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            browser.close()
+        _playwright_ok = True
+    except Exception as exc:
+        log.warning("Playwright launch failed: %s", exc)
+        _playwright_ok = False
+    return _playwright_ok
+
+
 def render_pdf(html_content: str) -> bytes:
-    if PLAYWRIGHT_AVAILABLE:
+    """Try each PDF engine in order; return the first success."""
+
+    # 1. Playwright (best quality, needs installed Chromium)
+    if _playwright_works():
         try:
             from playwright.sync_api import sync_playwright
 
@@ -129,17 +160,19 @@ def render_pdf(html_content: str) -> bytes:
                 )
                 browser.close()
                 return pdf_bytes
-        except Exception:
-            pass
+        except Exception as exc:
+            log.warning("Playwright PDF failed: %s", exc)
 
+    # 2. WeasyPrint (good quality, needs GTK/Pango on system)
     if WEASYPRINT_AVAILABLE:
         try:
             from weasyprint import HTML
 
             return HTML(string=html_content).write_pdf()
-        except Exception:
-            pass
+        except Exception as exc:
+            log.warning("WeasyPrint PDF failed: %s", exc)
 
+    # 3. xhtml2pdf (pure Python, always works, moderate quality)
     if XHTML2PDF_AVAILABLE:
         try:
             from xhtml2pdf import pisa
@@ -148,7 +181,20 @@ def render_pdf(html_content: str) -> bytes:
             pisa_status = pisa.CreatePDF(html_content, dest=result_buf)
             if not pisa_status.err:
                 return result_buf.getvalue()
-        except Exception:
-            pass
+        except Exception as exc:
+            log.warning("xhtml2pdf PDF failed: %s", exc)
 
-    raise RuntimeError("No working PDF engine available.")
+    raise RuntimeError(
+        "No working PDF engine. "
+        "Install one of: playwright (playwright install chromium), "
+        "weasyprint, or xhtml2pdf."
+    )
+
+
+def pdf_engine_status() -> dict[str, bool]:
+    """Return which PDF engines are importable + functional."""
+    return {
+        "playwright": _playwright_works(),
+        "weasyprint": WEASYPRINT_AVAILABLE,
+        "xhtml2pdf": XHTML2PDF_AVAILABLE,
+    }
