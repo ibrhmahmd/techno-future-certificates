@@ -97,6 +97,33 @@ TRACK_DATA_ATTR = {
     "Scratch Jr — Early Learning":        "scratch-jr",
 }
 
+TRACK_DEFAULT_COLORS = {
+    "html":              ("#c62828", "#ff6659"),
+    "css":               ("#1565c0", "#5e92f3"),
+    "javascript":        ("#f9a825", "#ffd95a"),
+    "python":            ("#2e7d32", "#60ad5e"),
+    "advanced":          ("#6a1b9a", "#9c4dcc"),
+    "problem_solving":   ("#e65100", "#ff833a"),
+    "robotics-wedo":     ("#7c4dff", "#b388ff"),
+    "robotics-spike-essential": ("#00c853", "#69f0ae"),
+    "robotics-spike-prime":     ("#388e3c", "#81c784"),
+    "robotics-ev3":      ("#1976d2", "#64b5f6"),
+    "robotics-arduino":  ("#ff6d00", "#ffab40"),
+    "scratch":           ("#ffab19", "#ffc966"),
+    "scratch-jr":        ("#4d97ff", "#85b8ff"),
+}
+
+
+def lighten_hex(hex_color: str, factor: float = 0.55) -> str:
+    """Derive a printable-friendly lighter variant by blending toward white."""
+    h = hex_color.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    lr = int(r + (255 - r) * factor)
+    lg = int(g + (255 - g) * factor)
+    lb = int(b + (255 - b) * factor)
+    return f"#{lr:02x}{lg:02x}{lb:02x}"
+
+
 LEVEL_LABELS = {
     "Level 1 — Junior": "Level 1 — Junior",
     "Level 2 — Intermediate": "Level 2 — Intermediate",
@@ -295,6 +322,8 @@ def build_html(
     instructor: str,
     director: str,
     verify_url: str = "",
+    custom_accent: str | None = None,
+    original_theme: bool = False,
 ) -> str:
     track_attr = TRACK_DATA_ATTR.get(course_name, "html")
     date_str = (
@@ -333,11 +362,29 @@ def build_html(
         else '<div style="width:65px;"></div>'
     )
 
+    accent_override = ""
+    if original_theme:
+        accent_override = (
+            f'<style>.certificate-page{{'
+            f'--track-accent:#006a61!important;'
+            f'--track-accent-light:#89f5e7!important;'
+            f'}}></style>'
+        )
+    elif custom_accent:
+        light = lighten_hex(custom_accent)
+        accent_override = (
+            f'<style>.certificate-page{{'
+            f'--track-accent:{custom_accent}!important;'
+            f'--track-accent-light:{light}!important;'
+            f'}}></style>'
+        )
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <style>{css}</style>
+{accent_override}
 </head>
 <body style="margin:0;padding:0;background:#fff;">
 <div class="certificate-page" data-track="{track_attr}">
@@ -490,6 +537,24 @@ with tab1:
                     "Academic Director *", value="Mr. Ibrahim Ahmed"
                 )
 
+            st.markdown("---")
+            st.subheader("Accent Color")
+            color_mode = st.radio(
+                "Color Mode",
+                ["Original Theme", "Custom Color"],
+                horizontal=True,
+                label_visibility="collapsed",
+            )
+            custom_accent_hex = None
+            if color_mode == "Custom Color":
+                default_track_attr = TRACK_DATA_ATTR.get(course_name, "html")
+                default_color = TRACK_DEFAULT_COLORS.get(default_track_attr, ("#006a61", "#89f5e7"))[0]
+                custom_accent_hex = st.color_picker(
+                    "Accent Color",
+                    value=default_color,
+                    label_visibility="collapsed",
+                )
+
             cert_id = generate_cert_id(course_name, cert_date)
 
             st.markdown("---")
@@ -529,6 +594,8 @@ with tab1:
                     cert_id=cert_id,
                     instructor=instructor.strip() or "Instructor",
                     director=director.strip() or "Academic Director",
+                    custom_accent=custom_accent_hex,
+                    original_theme=(color_mode == "Original Theme"),
                 )
 
                 st.components.v1.html(html_content, height=520, scrolling=True)
