@@ -16,18 +16,12 @@ st.set_page_config(
 
 deep_verify_id = st.query_params.get("verify") or st.query_params.get("cert_id")
 
-st.title("\U0001f393 Certificate System — Techno Future")
+st.title("Certificate System — Techno Future")
 st.caption(
-    "Official certificate generator, database registry, and instant ID verification portal"
+    "Official certificate generator, database registry, and instant ID verification"
 )
 
-tab1, tab2, tab3 = st.tabs(
-    [
-        "\U0001f393 Generate Certificate",
-        "\U0001f50d Validate Certificate",
-        "\U0001f4dc Certificate Registry",
-    ]
-)
+tab1, tab2, tab3 = st.tabs(["Generate", "Validate", "Registry"])
 
 with tab1:
     generate.render()
