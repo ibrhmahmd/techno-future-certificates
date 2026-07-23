@@ -165,6 +165,85 @@ def _flatten_css_vars(html: str) -> str:
     return re.sub(r"var\(--([\w-]+)\)", _replace_var, html)
 
 
+def _sanitize_for_xhtml2pdf(html: str) -> str:
+    """Strip CSS features xhtml2pdf cannot render."""
+    # Remove @font-face blocks (local fonts won't resolve on server; numeric weights error)
+    html = re.sub(r"@font-face\s*\{[^}]*\}", "", html)
+
+    # Remove @page and @media print blocks (balanced brace matching)
+    html = re.sub(r"@page\s*\{[^}]*\}", "", html)
+
+    def _remove_balanced_at(html: str, pattern: str) -> str:
+        """Remove an at-rule including nested {} blocks."""
+        m = re.search(pattern, html)
+        if not m:
+            return html
+        depth, i = 0, m.end() - 1
+        while i < len(html):
+            if html[i] == "{":
+                depth += 1
+            elif html[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    return html[: m.start()] + html[i + 1 :]
+            i += 1
+        return html
+
+    html = _remove_balanced_at(html, r"@media\s+print\s*\{")
+
+    # Resolve color-mix(in srgb, COLOR PCT%, transparent) → base color
+    def _resolve_color_mix(m: re.Match) -> str:
+        inner = m.group(1)
+        colors = re.findall(r"#[0-9a-fA-F]{3,8}|rgb\([^)]+\)", inner)
+        return colors[0] if colors else "transparent"
+
+    html = re.sub(
+        r"color-mix\(in\s+srgb\s*,\s*([^)]+)\)", _resolve_color_mix, html
+    )
+
+    # Resolve linear-gradient(...) → first non-transparent color stop
+    def _resolve_gradient(m: re.Match) -> str:
+        colors = re.findall(r"#[0-9a-fA-F]{3,8}|rgb\([^)]+\)", m.group(0))
+        return colors[0] if colors else "transparent"
+
+    html = re.sub(r"linear-gradient\([^)]+\)", _resolve_gradient, html)
+
+    # display:grid → display:block (xhtml2pdf has no grid support)
+    html = re.sub(r"display\s*:\s*grid", "display:block", html)
+
+    # Remove gap property
+    html = re.sub(r"gap\s*:\s*[^;]+;", "", html)
+
+    # inset:N → top:N;right:N;bottom:N;left:N
+    def _resolve_inset(m: re.Match) -> str:
+        val = m.group(1).strip()
+        return f"top:{val};right:{val};bottom:{val};left:{val};"
+
+    html = re.sub(r"inset\s*:\s*([^;]+);", _resolve_inset, html)
+
+    # Remove unsupported properties
+    for prop in (
+        "box-shadow",
+        "object-fit",
+        "text-transform",
+        "letter-spacing",
+        "border-radius",
+        "font-display",
+        "overflow",
+        "pointer-events",
+    ):
+        html = re.sub(rf"{prop}\s*:\s*[^;]+;", "", html)
+
+    # Numeric font-weight → normal / bold
+    def _resolve_font_weight(m: re.Match) -> str:
+        w = int(m.group(1))
+        return f"font-weight:{'bold' if w >= 600 else 'normal'}"
+
+    html = re.sub(r"font-weight\s*:\s*(\d+)", _resolve_font_weight, html)
+
+    return html
+
+
 # ─── Playwright browser health check (cached) ───
 _playwright_ok: bool | None = None
 
@@ -219,8 +298,9 @@ def render_pdf(html_content: str) -> bytes:
             from xhtml2pdf import pisa
 
             flat_html = _flatten_css_vars(html_content)
+            safe_html = _sanitize_for_xhtml2pdf(flat_html)
             result_buf = BytesIO()
-            pisa_status = pisa.CreatePDF(flat_html, dest=result_buf)
+            pisa_status = pisa.CreatePDF(safe_html, dest=result_buf)
             if not pisa_status.err:
                 return result_buf.getvalue()
         except Exception as exc:
