@@ -299,73 +299,165 @@ def _sanitize_for_xhtml2pdf(html: str) -> str:
 _playwright_ok: bool | None = None
 
 
+def _try_install_chromium() -> None:
+    """Install Chromium browser binaries via Playwright CLI."""
+    import subprocess
+    import sys
+
+    log.info("Attempting: playwright install chromium ...")
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            timeout=120,
+            capture_output=True,
+        )
+        log.info("playwright install chromium completed.")
+    except Exception as exc:
+        log.warning("playwright install chromium failed: %s", exc)
+
+
+def _try_install_chromium_with_deps() -> None:
+    """Install Chromium + system deps (slower, needs root on some platforms)."""
+    import subprocess
+    import sys
+
+    log.info("Attempting: playwright install --with-deps chromium ...")
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"],
+            timeout=180,
+            capture_output=True,
+        )
+        log.info("playwright install --with-deps chromium completed.")
+    except Exception as exc:
+        log.warning("playwright install --with-deps chromium failed: %s", exc)
+
+
+def _can_launch_chromium(**launch_kwargs) -> bool:
+    """Return True if Chromium can be launched with given kwargs."""
+    try:
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, **launch_kwargs)
+            browser.close()
+        return True
+    except Exception:
+        return False
+
+
 def _playwright_works() -> bool:
-    """Test once whether Playwright can actually launch Chromium."""
+    """Test once whether Playwright can actually launch Chromium.
+
+    Strategy:
+    1. Try default launch
+    2. If missing browser → install → retry
+    3. If still missing → install with --with-deps → retry
+    4. Try channel='chromium' as last resort
+    """
     global _playwright_ok
     if _playwright_ok is not None:
         return _playwright_ok
     if not PLAYWRIGHT_AVAILABLE:
         _playwright_ok = False
         return False
-    try:
-        from playwright.sync_api import sync_playwright
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            browser.close()
+    # 1. Default launch
+    if _can_launch_chromium():
         _playwright_ok = True
-    except Exception as exc:
-        log.warning("Playwright default launch failed: %s — trying chromium channel", exc)
-        try:
-            from playwright.sync_api import sync_playwright
+        return True
 
+    # 2. Browser missing — install without system deps
+    _try_install_chromium()
+    if _can_launch_chromium():
+        _playwright_ok = True
+        return True
+
+    # 3. Still missing — install WITH system deps
+    _try_install_chromium_with_deps()
+    if _can_launch_chromium():
+        _playwright_ok = True
+        return True
+
+    # 4. channel="chromium" fallback
+    if _can_launch_chromium(channel="chromium"):
+        _playwright_ok = True
+        return True
+
+    log.warning("All Playwright launch attempts failed.")
+    _playwright_ok = False
+    return False
+
+
+def _playwright_render(html_content: str) -> bytes | None:
+    """Attempt to render PDF via Playwright. Returns bytes or None."""
+    if not PLAYWRIGHT_AVAILABLE:
+        return None
+
+    from playwright.sync_api import sync_playwright
+
+    for launch_kwargs in ({}, {"channel": "chromium"}):
+        try:
             with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True, channel="chromium")
+                browser = p.chromium.launch(headless=True, **launch_kwargs)
+                page = browser.new_page()
+                page.set_content(html_content, wait_until="load", timeout=15000)
+                pdf_bytes = page.pdf(
+                    format="A4",
+                    landscape=True,
+                    print_background=True,
+                    margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
+                )
                 browser.close()
-            _playwright_ok = True
-        except Exception as exc2:
-            log.warning("Playwright chromium channel also failed: %s", exc2)
-            _playwright_ok = False
-    return _playwright_ok
+                return pdf_bytes
+        except Exception as exc:
+            log.warning("Playwright PDF failed (%s): %s", launch_kwargs or "default", exc)
+    return None
+
+
+def _xhtml2pdf_render(html_content: str) -> bytes | None:
+    """Attempt to render PDF via xhtml2pdf. Returns bytes or None."""
+    if not XHTML2PDF_AVAILABLE:
+        return None
+    try:
+        from xhtml2pdf import pisa
+
+        flat_html = _flatten_css_vars(html_content)
+        safe_html = _sanitize_for_xhtml2pdf(flat_html)
+        result_buf = BytesIO()
+        pisa_status = pisa.CreatePDF(safe_html, dest=result_buf)
+        if not pisa_status.err:
+            return result_buf.getvalue()
+    except Exception as exc:
+        log.warning("xhtml2pdf PDF failed: %s", exc)
+    return None
 
 
 def render_pdf(html_content: str) -> bytes:
-    """Try each PDF engine in order; return the first success."""
+    """Try each PDF engine in order; return the first success.
 
-    # 1. Playwright (best quality, needs installed Chromium)
-    if _playwright_works():
-        for launch_kwargs in ({}, {"channel": "chromium"}):
-            try:
-                from playwright.sync_api import sync_playwright
+    Order: Playwright (pixel-perfect) → install & retry → xhtml2pdf (fallback).
+    """
+    global _playwright_ok
 
-                with sync_playwright() as p:
-                    browser = p.chromium.launch(headless=True, **launch_kwargs)
-                    page = browser.new_page()
-                    page.set_content(html_content, wait_until="load", timeout=15000)
-                    pdf_bytes = page.pdf(
-                        format="A4",
-                        landscape=True,
-                        print_background=True,
-                        margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
-                    )
-                    browser.close()
-                    return pdf_bytes
-            except Exception as exc:
-                log.warning("Playwright PDF failed (%s): %s", launch_kwargs or "default", exc)
+    # 1. Playwright (already verified or first attempt)
+    if _playwright_ok is not False:
+        result = _playwright_render(html_content)
+        if result:
+            return result
 
-    # 2. xhtml2pdf (pure Python, always works, moderate quality)
-    if XHTML2PDF_AVAILABLE:
-        try:
-            from xhtml2pdf import pisa
+    # 2. Playwright not working — try installing browsers, then retry
+    if PLAYWRIGHT_AVAILABLE and _playwright_ok is not False:
+        _try_install_chromium()
+        result = _playwright_render(html_content)
+        if result:
+            _playwright_ok = True
+            return result
 
-            flat_html = _flatten_css_vars(html_content)
-            safe_html = _sanitize_for_xhtml2pdf(flat_html)
-            result_buf = BytesIO()
-            pisa_status = pisa.CreatePDF(safe_html, dest=result_buf)
-            if not pisa_status.err:
-                return result_buf.getvalue()
-        except Exception as exc:
-            log.warning("xhtml2pdf PDF failed: %s", exc)
+    # 3. xhtml2pdf (pure Python, always works, moderate quality)
+    result = _xhtml2pdf_render(html_content)
+    if result:
+        return result
 
     raise RuntimeError(
         "No working PDF engine. "
