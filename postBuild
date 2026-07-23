@@ -1,4 +1,4 @@
 #!/bin/bash
 # Streamlit Cloud runs this after pip install
-# Install ALL Playwright browsers + system deps (chromium, chromium-headless-shell, etc.)
-python -m playwright install --with-deps
+# Install Chromium + headless shell variant (needed for headless=True)
+playwright install --with-deps chromium chromium-headless-shell
