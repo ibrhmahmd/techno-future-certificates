@@ -96,6 +96,25 @@ def build_html(
             f"}}</style>"
         )
 
+    instructor_sig = (
+        f'<div class="cert-signature">'
+        f'<div class="cert-signature-line"></div>'
+        f'<div class="cert-signature-name">{instructor}</div>'
+        f'<div class="cert-signature-role">Instructor</div>'
+        f'</div>'
+        if instructor
+        else ""
+    )
+    director_sig = (
+        f'<div class="cert-signature">'
+        f'<div class="cert-signature-line"></div>'
+        f'<div class="cert-signature-name">{director}</div>'
+        f'<div class="cert-signature-role">Academic Director</div>'
+        f'</div>'
+        if director
+        else ""
+    )
+
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
     return template.format(
         css=css,
@@ -109,8 +128,8 @@ def build_html(
         level=level,
         date_str=date_str,
         branch=branch,
-        instructor=instructor,
-        director=director,
+        instructor_sig=instructor_sig,
+        director_sig=director_sig,
         cert_id=cert_id,
     )
 

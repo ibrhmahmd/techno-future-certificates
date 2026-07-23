@@ -35,7 +35,10 @@ def _render_preview(
             st.caption(f"Date: {cert_date}")
         with c3:
             st.markdown(f"Branch: **{branch}**")
-            st.caption(f"Instructor: {instructor}")
+            if instructor:
+                st.caption(f"Instructor: {instructor}")
+            if director:
+                st.caption(f"Director: {director}")
 
     zoom = st.slider("Preview zoom", 50, 100, 75, step=5, key="preview_zoom")
 
@@ -99,13 +102,13 @@ def render() -> None:
                 )
                 branch = st.text_input(
                     "Branch *",
-                    value="Main Branch",
+                    placeholder="Main Branch",
                     help="Center or branch location",
                 )
                 instructor = st.text_input(
-                    "Instructor Name *",
-                    value="Ms. Sara Mahmoud",
-                    help="Name of the completing instructor",
+                    "Instructor Name",
+                    placeholder="Ms. Sara Mahmoud",
+                    help="Optional — leave blank to omit from certificate",
                 )
             with c2:
                 level = st.selectbox(
@@ -119,9 +122,9 @@ def render() -> None:
                     help="Date the student completed the course",
                 )
                 director = st.text_input(
-                    "Academic Director *",
-                    value="Mr. Ibrahim Ahmed",
-                    help="Academic director who signs the certificate",
+                    "Academic Director",
+                    placeholder="Mr. Ibrahim Ahmed",
+                    help="Optional — leave blank to omit from certificate",
                 )
 
             st.markdown("---")
@@ -169,8 +172,8 @@ def render() -> None:
                 level=level,
                 issue_date=cert_date,
                 branch=branch.strip() or "Main Branch",
-                instructor=instructor.strip() or "Instructor",
-                director=director.strip() or "Academic Director",
+                instructor=instructor.strip(),
+                director=director.strip(),
             )
             st.toast(f"Certificate saved — {cert_id}", icon="\u2705")
 
@@ -181,8 +184,8 @@ def render() -> None:
                 date=cert_date,
                 branch=branch.strip() or "Main Branch",
                 cert_id=cert_id,
-                instructor=instructor.strip() or "Instructor",
-                director=director.strip() or "Academic Director",
+                instructor=instructor.strip(),
+                director=director.strip(),
                 custom_accent=custom_accent_hex,
                 original_theme=(color_mode == "Original Theme"),
             )
@@ -195,8 +198,8 @@ def render() -> None:
                 cert_date=cert_date,
                 level=level,
                 branch=branch.strip() or "Main Branch",
-                instructor=instructor.strip() or "Instructor",
-                director=director.strip() or "Academic Director",
+                instructor=instructor.strip(),
+                director=director.strip(),
             )
         else:
             st.info(
