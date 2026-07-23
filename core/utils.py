@@ -28,26 +28,6 @@ try:
 except Exception:
     pass
 
-WEASYPRINT_AVAILABLE = False
-try:
-    import sys as _sys
-    import io as _io
-    import logging as _logging
-
-    _logging.getLogger("weasyprint").setLevel(_logging.CRITICAL)
-    _stderr = _sys.stderr
-    _stdout = _sys.stdout
-    _sys.stderr = _io.StringIO()
-    _sys.stdout = _io.StringIO()
-    try:
-        from weasyprint import HTML  # noqa: F401
-        WEASYPRINT_AVAILABLE = True
-    finally:
-        _sys.stderr = _stderr
-        _sys.stdout = _stdout
-except Exception:
-    pass
-
 XHTML2PDF_AVAILABLE = False
 try:
     from xhtml2pdf import pisa  # noqa: F401

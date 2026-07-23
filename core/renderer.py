@@ -18,7 +18,6 @@ from core.config import (
 from core.utils import (
     PLAYWRIGHT_AVAILABLE,
     QRCODE_AVAILABLE,
-    WEASYPRINT_AVAILABLE,
     XHTML2PDF_AVAILABLE,
     embed_fonts,
     generate_qr_code,
@@ -163,16 +162,7 @@ def render_pdf(html_content: str) -> bytes:
         except Exception as exc:
             log.warning("Playwright PDF failed: %s", exc)
 
-    # 2. WeasyPrint (good quality, needs GTK/Pango on system)
-    if WEASYPRINT_AVAILABLE:
-        try:
-            from weasyprint import HTML
-
-            return HTML(string=html_content).write_pdf()
-        except Exception as exc:
-            log.warning("WeasyPrint PDF failed: %s", exc)
-
-    # 3. xhtml2pdf (pure Python, always works, moderate quality)
+    # 2. xhtml2pdf (pure Python, always works, moderate quality)
     if XHTML2PDF_AVAILABLE:
         try:
             from xhtml2pdf import pisa
@@ -186,8 +176,7 @@ def render_pdf(html_content: str) -> bytes:
 
     raise RuntimeError(
         "No working PDF engine. "
-        "Install one of: playwright (playwright install chromium), "
-        "weasyprint, or xhtml2pdf."
+        "Install: playwright (playwright install chromium) or xhtml2pdf."
     )
 
 
@@ -195,6 +184,5 @@ def pdf_engine_status() -> dict[str, bool]:
     """Return which PDF engines are importable + functional."""
     return {
         "playwright": _playwright_works(),
-        "weasyprint": WEASYPRINT_AVAILABLE,
         "xhtml2pdf": XHTML2PDF_AVAILABLE,
     }

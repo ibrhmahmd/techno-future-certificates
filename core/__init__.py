@@ -14,7 +14,6 @@ from core.database import get_certificate, init_db, list_certificates, save_cert
 from core.renderer import build_html, render_pdf
 from core.utils import (
     QRCODE_AVAILABLE,
-    WEASYPRINT_AVAILABLE,
     XHTML2PDF_AVAILABLE,
     PLAYWRIGHT_AVAILABLE,
     build_download_filename,

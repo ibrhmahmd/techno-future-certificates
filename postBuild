@@ -1,0 +1,4 @@
+#!/bin/bash
+# Streamlit Cloud runs this after pip install - requirements.txt
+# Installs Playwright's Chromium browser binary
+playwright install chromium
