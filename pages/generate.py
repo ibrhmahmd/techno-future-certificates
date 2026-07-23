@@ -40,7 +40,7 @@ def _render_preview(
     zoom = st.slider("Preview zoom", 50, 100, 75, step=5, key="preview_zoom")
 
     scaled_height = int(520 * (zoom / 100))
-    st.components.v1.html(html_content, height=scaled_height, scrolling=True)
+    st.iframe(html_content, height=scaled_height)
 
     st.markdown("---")
     fn_html = build_download_filename(student_name, course_name, "html")
@@ -53,7 +53,7 @@ def _render_preview(
             data=html_content,
             file_name=fn_html,
             mime="text/html",
-            use_container_width=True,
+            width="stretch",
         )
     with b2:
         with st.spinner("Generating PDF..."):
@@ -65,7 +65,7 @@ def _render_preview(
                     file_name=fn_pdf,
                     mime="application/pdf",
                     type="primary",
-                    use_container_width=True,
+                    width="stretch",
                 )
             except Exception:
                 status = pdf_engine_status()
@@ -152,7 +152,7 @@ def render() -> None:
             submitted = st.form_submit_button(
                 "Generate & Save Certificate",
                 type="primary",
-                use_container_width=True,
+                width="stretch",
             )
 
     with col_preview:

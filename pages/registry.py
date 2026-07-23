@@ -50,7 +50,7 @@ def _track_chart(df: pd.DataFrame) -> None:
         )
         .properties(height=max(200, len(counts) * 28))
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def render() -> None:
@@ -146,7 +146,7 @@ def render() -> None:
                             instructor=cert_data["instructor"],
                             director=cert_data["director"],
                         )
-                        st.components.v1.html(cert_html, height=500, scrolling=True)
+                        st.iframe(cert_html, height=500)
 
                 if st.button("Download PDF", key=f"dl_{cert_id}"):
                     cert_data = get_certificate(cert_id)

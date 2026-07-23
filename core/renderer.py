@@ -5,6 +5,7 @@ Pure Python — zero Streamlit imports.
 
 import datetime
 import logging
+import re
 from io import BytesIO
 
 from core.config import (
@@ -114,6 +115,37 @@ def build_html(
     )
 
 
+def _flatten_css_vars(html: str) -> str:
+    """Replace var(--name) references with their actual values for xhtml2pdf."""
+    vars_map: dict[str, str] = {}
+
+    # Extract from inline override: .certificate-page{--track-accent:#xxx!important;}
+    for m in re.finditer(
+        r"--([\w-]+)\s*:\s*([^;]+)", html
+    ):
+        name, val = m.group(1), m.group(2).strip()
+        val = val.replace("!important", "").strip()
+        if val.startswith("#") or val.startswith("rgb"):
+            vars_map[name] = val
+
+    # Extract from :root{--primary:#xxx;} in stylesheet
+    root_block = re.search(r":root\{([^}]+)\}", html)
+    if root_block:
+        for m in re.finditer(r"--([\w-]+)\s*:\s*([^;]+)", root_block.group(1)):
+            name, val = m.group(1), m.group(2).strip()
+            if name not in vars_map and (val.startswith("#") or val.startswith("rgb")):
+                vars_map[name] = val
+
+    if not vars_map:
+        return html
+
+    def _replace_var(m: re.Match) -> str:
+        var_name = m.group(1)
+        return vars_map.get(var_name, m.group(0))
+
+    return re.sub(r"var\(--([\w-]+)\)", _replace_var, html)
+
+
 # ─── Playwright browser health check (cached) ───
 _playwright_ok: bool | None = None
 
@@ -167,8 +199,9 @@ def render_pdf(html_content: str) -> bytes:
         try:
             from xhtml2pdf import pisa
 
+            flat_html = _flatten_css_vars(html_content)
             result_buf = BytesIO()
-            pisa_status = pisa.CreatePDF(html_content, dest=result_buf)
+            pisa_status = pisa.CreatePDF(flat_html, dest=result_buf)
             if not pisa_status.err:
                 return result_buf.getvalue()
         except Exception as exc:

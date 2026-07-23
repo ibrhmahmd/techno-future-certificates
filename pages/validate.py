@@ -77,4 +77,4 @@ def render(verify_id: str | None = None) -> None:
             instructor=cert_data["instructor"],
             director=cert_data["director"],
         )
-        st.components.v1.html(cert_html, height=500, scrolling=True)
+        st.iframe(cert_html, height=500)
