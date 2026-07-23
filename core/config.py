@@ -62,8 +62,8 @@ TRACK_DEFAULT_COLORS = {
     "scratch-jr":               ("#4d97ff", "#85b8ff"),
 }
 
-LEVEL_LABELS = {
-    "Level 1 — Junior": "Level 1 — Junior",
-    "Level 2 — Intermediate": "Level 2 — Intermediate",
-    "Level 3 — Advanced": "Level 3 — Advanced",
-}
+LEVEL_OPTIONS = (
+    "Level 1 — Junior",
+    "Level 2 — Intermediate",
+    "Level 3 — Advanced",
+)

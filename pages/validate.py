@@ -3,12 +3,10 @@ Tab 2 — Validate Certificate.
 Streamlit UI for certificate lookup and authenticity verification.
 """
 
-import datetime
-
 import streamlit as st
 
 from core.database import get_certificate
-from core.renderer import build_html
+from core.renderer import build_html_from_db
 
 
 def render(verify_id: str | None = None) -> None:
@@ -57,24 +55,5 @@ def render(verify_id: str | None = None) -> None:
         """)
 
     with v2:
-        try:
-            dt = datetime.datetime.strptime(
-                cert_data["issue_date"], "%Y-%m-%d"
-            ).date()
-        except Exception:
-            dt = datetime.date.today()
-
-        branch_val = cert_data.get("branch") or cert_data.get(
-            "center", "Main Branch"
-        )
-        cert_html = build_html(
-            student_name=cert_data["student_name"],
-            course_name=cert_data["course_name"],
-            level=cert_data["level"],
-            date=dt,
-            branch=branch_val,
-            cert_id=cert_data["cert_id"],
-            instructor=cert_data["instructor"],
-            director=cert_data["director"],
-        )
+        cert_html = build_html_from_db(cert_data)
         st.iframe(cert_html, height=500)

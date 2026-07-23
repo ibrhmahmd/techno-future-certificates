@@ -134,6 +134,25 @@ def build_html(
     )
 
 
+def build_html_from_db(cert_data: dict) -> str:
+    """Build certificate HTML from a database row dict."""
+    try:
+        dt = datetime.datetime.strptime(cert_data["issue_date"], "%Y-%m-%d").date()
+    except (ValueError, KeyError):
+        dt = datetime.date.today()
+    branch_val = cert_data.get("branch") or cert_data.get("center", "Main Branch")
+    return build_html(
+        student_name=cert_data["student_name"],
+        course_name=cert_data["course_name"],
+        level=cert_data["level"],
+        date=dt,
+        branch=branch_val,
+        cert_id=cert_data["cert_id"],
+        instructor=cert_data["instructor"],
+        director=cert_data["director"],
+    )
+
+
 def _flatten_css_vars(html: str) -> str:
     """Replace var(--name) references with their actual values for xhtml2pdf."""
     vars_map: dict[str, str] = {}

@@ -4,13 +4,16 @@ Streamlit UI for the certificate creation form, live preview, and downloads.
 """
 
 import datetime
+import logging
 
 import streamlit as st
 
-from core.config import LEVEL_LABELS, TRACK_DATA_ATTR, TRACK_DEFAULT_COLORS, TRACK_LOGOS
+from core.config import LEVEL_OPTIONS, TRACK_DATA_ATTR, TRACK_DEFAULT_COLORS, TRACK_LOGOS
 from core.database import save_certificate
 from core.renderer import build_html, pdf_engine_status, render_pdf
 from core.utils import build_download_filename, generate_cert_id
+
+log = logging.getLogger(__name__)
 
 
 def _render_preview(
@@ -70,7 +73,8 @@ def _render_preview(
                     type="primary",
                     width="stretch",
                 )
-            except Exception:
+            except Exception as exc:
+                log.warning("PDF render failed: %s", exc)
                 status = pdf_engine_status()
                 engines = [k for k, v in status.items() if v]
                 missing = [k for k, v in status.items() if not v]
@@ -113,7 +117,7 @@ def render() -> None:
             with c2:
                 level = st.selectbox(
                     "Level *",
-                    list(LEVEL_LABELS.keys()),
+                    LEVEL_OPTIONS,
                     help="Junior, Intermediate, or Advanced",
                 )
                 cert_date = st.date_input(

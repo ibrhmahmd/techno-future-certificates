@@ -4,6 +4,7 @@ Streamlit UI for browsing, filtering, exporting, and re-downloading certificates
 """
 
 import datetime
+import logging
 
 import altair as alt
 import pandas as pd
@@ -11,8 +12,10 @@ import streamlit as st
 
 from core.config import TRACK_LOGOS
 from core.database import get_certificate, list_certificates
-from core.renderer import build_html, render_pdf
+from core.renderer import build_html_from_db, render_pdf
 from core.utils import build_download_filename
+
+log = logging.getLogger(__name__)
 
 
 def _metrics_row(df: pd.DataFrame) -> None:
@@ -127,49 +130,13 @@ def render() -> None:
                 if st.button("View Certificate", key=f"view_{cert_id}"):
                     cert_data = get_certificate(cert_id)
                     if cert_data:
-                        try:
-                            dt = datetime.datetime.strptime(
-                                cert_data["issue_date"], "%Y-%m-%d"
-                            ).date()
-                        except Exception:
-                            dt = datetime.date.today()
-                        branch_val = cert_data.get("branch") or cert_data.get(
-                            "center", "Main Branch"
-                        )
-                        cert_html = build_html(
-                            student_name=cert_data["student_name"],
-                            course_name=cert_data["course_name"],
-                            level=cert_data["level"],
-                            date=dt,
-                            branch=branch_val,
-                            cert_id=cert_data["cert_id"],
-                            instructor=cert_data["instructor"],
-                            director=cert_data["director"],
-                        )
+                        cert_html = build_html_from_db(cert_data)
                         st.iframe(cert_html, height=500)
 
                 if st.button("Download PDF", key=f"dl_{cert_id}"):
                     cert_data = get_certificate(cert_id)
                     if cert_data:
-                        try:
-                            dt = datetime.datetime.strptime(
-                                cert_data["issue_date"], "%Y-%m-%d"
-                            ).date()
-                        except Exception:
-                            dt = datetime.date.today()
-                        branch_val = cert_data.get("branch") or cert_data.get(
-                            "center", "Main Branch"
-                        )
-                        cert_html = build_html(
-                            student_name=cert_data["student_name"],
-                            course_name=cert_data["course_name"],
-                            level=cert_data["level"],
-                            date=dt,
-                            branch=branch_val,
-                            cert_id=cert_data["cert_id"],
-                            instructor=cert_data["instructor"],
-                            director=cert_data["director"],
-                        )
+                        cert_html = build_html_from_db(cert_data)
                         with st.spinner("Generating PDF..."):
                             try:
                                 pdf_bytes = render_pdf(cert_html)
@@ -185,7 +152,8 @@ def render() -> None:
                                     mime="application/pdf",
                                     key=f"save_{cert_id}",
                                 )
-                            except Exception:
+                            except Exception as exc:
+                                log.warning("PDF render failed for %s: %s", cert_id, exc)
                                 st.warning("PDF engine unavailable.")
 
     st.markdown("---")

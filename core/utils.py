@@ -11,7 +11,7 @@ import uuid
 from io import BytesIO
 from pathlib import Path
 
-from core.config import COMPANY_LOGO, FONTS_DIR, TRACK_DATA_ATTR, TRACK_LOGOS
+from core.config import FONTS_DIR
 
 # ─── Library availability flags ───
 QRCODE_AVAILABLE = False
@@ -25,14 +25,14 @@ PLAYWRIGHT_AVAILABLE = False
 try:
     from playwright.sync_api import sync_playwright  # noqa: F401
     PLAYWRIGHT_AVAILABLE = True
-except Exception:
+except ImportError:
     pass
 
 XHTML2PDF_AVAILABLE = False
 try:
     from xhtml2pdf import pisa  # noqa: F401
     XHTML2PDF_AVAILABLE = True
-except Exception:
+except ImportError:
     pass
 
 
@@ -74,7 +74,7 @@ def get_logo_base64(path: Path) -> str:
 
 def embed_fonts(css: str) -> str:
     """Replace local font url() references with base64 data URIs for PDF engines."""
-    def _replace_url(match):
+    def _replace_url(match: re.Match) -> str:
         filename = os.path.basename(match.group(1))
         font_path = (FONTS_DIR / filename).resolve()
         if font_path.exists():
