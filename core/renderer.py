@@ -210,6 +210,15 @@ def _sanitize_for_xhtml2pdf(html: str) -> str:
 
     html = _remove_balanced_at(html, r"@media\s+print\s*\{")
 
+    # Remove attribute selectors [data-track="..."] — xhtml2pdf doesn't support them
+    html = re.sub(r"\[data-track\s*=\s*\"[^\"]*\"\]\s*\{[^}]*\}", "", html)
+
+    # Remove ::before / ::after pseudo-element blocks
+    html = re.sub(r"::(?:before|after)\s*\{[^}]*\}", "", html)
+
+    # Remove * universal selector rules
+    html = re.sub(r"\*\s*\{[^}]*\}", "", html)
+
     # Resolve color-mix(in srgb, COLOR PCT%, transparent) → base color
     def _resolve_color_mix(m: re.Match) -> str:
         inner = m.group(1)
@@ -227,8 +236,19 @@ def _sanitize_for_xhtml2pdf(html: str) -> str:
 
     html = re.sub(r"linear-gradient\([^)]+\)", _resolve_gradient, html)
 
-    # display:grid → display:block (xhtml2pdf has no grid support)
+    # display:grid/flex → display:block
     html = re.sub(r"display\s*:\s*grid", "display:block", html)
+    html = re.sub(r"display\s*:\s*flex", "display:block", html)
+
+    # Remove flex-* properties
+    html = re.sub(r"flex-direction\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"flex-wrap\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"flex-shrink\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"flex\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"justify-content\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"align-items\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"align-self\s*:\s*[^;]+;", "", html)
+    html = re.sub(r"align-content\s*:\s*[^;]+;", "", html)
 
     # Remove gap property
     html = re.sub(r"gap\s*:\s*[^;]+;", "", html)
@@ -240,6 +260,9 @@ def _sanitize_for_xhtml2pdf(html: str) -> str:
 
     html = re.sub(r"inset\s*:\s*([^;]+);", _resolve_inset, html)
 
+    # Remove background-image with data: URIs (SVG patterns not supported)
+    html = re.sub(r"background-image\s*:\s*url\([^)]+\)\s*;?", "", html)
+
     # Remove unsupported properties
     for prop in (
         "box-shadow",
@@ -250,6 +273,15 @@ def _sanitize_for_xhtml2pdf(html: str) -> str:
         "font-display",
         "overflow",
         "pointer-events",
+        "box-sizing",
+        "min-height",
+        "min-width",
+        "max-width",
+        "opacity",
+        "z-index",
+        "white-space",
+        "word-break",
+        "line-height",
     ):
         html = re.sub(rf"{prop}\s*:\s*[^;]+;", "", html)
 
@@ -283,8 +315,17 @@ def _playwright_works() -> bool:
             browser.close()
         _playwright_ok = True
     except Exception as exc:
-        log.warning("Playwright launch failed: %s", exc)
-        _playwright_ok = False
+        log.warning("Playwright default launch failed: %s — trying chromium channel", exc)
+        try:
+            from playwright.sync_api import sync_playwright
+
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, channel="chromium")
+                browser.close()
+            _playwright_ok = True
+        except Exception as exc2:
+            log.warning("Playwright chromium channel also failed: %s", exc2)
+            _playwright_ok = False
     return _playwright_ok
 
 
@@ -293,23 +334,24 @@ def render_pdf(html_content: str) -> bytes:
 
     # 1. Playwright (best quality, needs installed Chromium)
     if _playwright_works():
-        try:
-            from playwright.sync_api import sync_playwright
+        for launch_kwargs in ({}, {"channel": "chromium"}):
+            try:
+                from playwright.sync_api import sync_playwright
 
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                page = browser.new_page()
-                page.set_content(html_content, wait_until="load", timeout=15000)
-                pdf_bytes = page.pdf(
-                    format="A4",
-                    landscape=True,
-                    print_background=True,
-                    margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
-                )
-                browser.close()
-                return pdf_bytes
-        except Exception as exc:
-            log.warning("Playwright PDF failed: %s", exc)
+                with sync_playwright() as p:
+                    browser = p.chromium.launch(headless=True, **launch_kwargs)
+                    page = browser.new_page()
+                    page.set_content(html_content, wait_until="load", timeout=15000)
+                    pdf_bytes = page.pdf(
+                        format="A4",
+                        landscape=True,
+                        print_background=True,
+                        margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
+                    )
+                    browser.close()
+                    return pdf_bytes
+            except Exception as exc:
+                log.warning("Playwright PDF failed (%s): %s", launch_kwargs or "default", exc)
 
     # 2. xhtml2pdf (pure Python, always works, moderate quality)
     if XHTML2PDF_AVAILABLE:
