@@ -23,3 +23,9 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Environment variables
+.env
+
+# Steel
+.steel/

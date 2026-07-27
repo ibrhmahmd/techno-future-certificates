@@ -627,6 +627,19 @@ def render_html(
     )
 
 
+def _get_steel_session():
+    """Create a Steel cloud browser session and return (client, session)."""
+    from steel import Steel
+
+    api_key = os.getenv("STEEL_API_KEY")
+    if not api_key:
+        return None, None
+
+    client = Steel(api_key=api_key)
+    session = client.sessions.create()
+    return client, session
+
+
 def render_pdf(
     student_name: str,
     course_name: str,
@@ -642,11 +655,10 @@ def render_pdf(
 ) -> bytes:
     """Render certificate PDF via headless Chromium (Playwright).
 
-    Builds the same HTML that render_html() produces (pixel-perfect browser
-    output) and prints it to PDF using a real Chromium instance — so the PDF
-    is identical to what you see in the browser.
+    Uses Steel cloud browser when STEEL_API_KEY is set, otherwise falls back
+    to local Chromium. Builds the same HTML that render_html() produces and
+    prints it to PDF using a real Chromium instance.
     """
-    # Build the same high-fidelity HTML used for browser preview
     html_content = render_html(
         student_name=student_name,
         course_name=course_name,
@@ -661,17 +673,27 @@ def render_pdf(
         verify_url=verify_url,
     )
 
+    steel_client = None
+    steel_session = None
+
     try:
         from playwright.sync_api import sync_playwright
 
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch()
-            page = browser.new_page()
+        steel_api_key = os.getenv("STEEL_API_KEY")
 
-            # Load HTML directly — all assets are already base64-embedded
+        with sync_playwright() as pw:
+            if steel_api_key:
+                log.info("Using Steel cloud browser for PDF rendering")
+                steel_client, steel_session = _get_steel_session()
+                cdp_url = steel_session.cdp_url
+                browser = pw.chromium.connect_over_cdp(cdp_url)
+            else:
+                log.info("Using local Chromium for PDF rendering")
+                browser = pw.chromium.launch()
+
+            page = browser.new_page()
             page.set_content(html_content, wait_until="networkidle")
 
-            # Print to PDF: landscape A4, no browser margins, background graphics on
             pdf_bytes = page.pdf(
                 format="A4",
                 landscape=True,
@@ -684,5 +706,12 @@ def render_pdf(
     except Exception as exc:
         log.error("Playwright PDF rendering failed: %s", exc)
         raise RuntimeError(f"PDF rendering failed: {exc}") from exc
+
+    finally:
+        if steel_client and steel_session:
+            try:
+                steel_client.sessions.release(steel_session.id)
+            except Exception:
+                pass
 
 

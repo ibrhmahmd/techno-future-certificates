@@ -8,3 +8,4 @@ playwright
 jinja2
 python-multipart
 httpx
+steel-sdk
