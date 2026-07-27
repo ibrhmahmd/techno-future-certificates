@@ -1,6 +1,7 @@
-streamlit
+fastapi
+uvicorn[standard]
+sqlmodel
+psycopg2-binary
+pydantic
 qrcode[pil]
-pandas
-altair
-playwright
 xhtml2pdf
