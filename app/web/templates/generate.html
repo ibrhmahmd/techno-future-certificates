@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Generate Certificate — Certificate Manager{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Generate Certificate</h1>
+
+    <form id="gen-form" hx-post="/partials/generate-result" hx-target="#gen-result" hx-swap="innerHTML" hx-indicator="#gen-btn" class="bg-white shadow rounded-lg p-6 space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Student Name *</label>
+            <input type="text" name="student_name" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Course Track *</label>
+                <select name="course_track" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">Select track...</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="problem_solving">Problem Solving</option>
+                    <option value="robotics-wedo">Robotics WeDo 2.0</option>
+                    <option value="robotics-spike-essential">Robotics SPIKE Essential</option>
+                    <option value="robotics-spike-prime">Robotics SPIKE Prime</option>
+                    <option value="robotics-ev3">Robotics EV3</option>
+                    <option value="robotics-arduino">Robotics Arduino</option>
+                    <option value="scratch">Scratch</option>
+                    <option value="scratch-jr">Scratch Jr</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Level *</label>
+                <select name="level" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">Select level...</option>
+                    <option value="Level 1 — Junior">Level 1 — Junior</option>
+                    <option value="Level 2 — Intermediate">Level 2 — Intermediate</option>
+                    <option value="Level 3 — Advanced">Level 3 — Advanced</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Issue Date *</label>
+                <input type="date" name="issue_date" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Branch *</label>
+                <input type="text" name="branch" required placeholder="e.g. Heliopolis" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Instructor</label>
+                <input type="text" name="instructor" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Director</label>
+                <input type="text" name="director" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+            <button id="gen-btn" type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <span class="htmx-indicator mr-2">Generating...</span>
+                Generate Certificate
+            </button>
+        </div>
+    </form>
+
+    <div id="gen-result" class="mt-6"></div>
+</div>
+{% endblock %}

@@ -21,13 +21,13 @@ class CertificateRepository:
         return certificate
 
     def get_by_cert_id(self, cert_id: str) -> Optional[Certificate]:
-        return self._session.get(Certificate, cert_id) or self._exec_one(
+        return self._exec_one(
             select(Certificate).where(Certificate.cert_id == cert_id)
         )
 
     def _exec_one(self, stmt: Any) -> Optional[Certificate]:
         results = self._session.exec(stmt)
-        return results.scalars().first()
+        return results.first()
 
     def get_by_unique_key(
         self, student_name: str, course_track: str, issue_date: date
@@ -71,7 +71,7 @@ class CertificateRepository:
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
         results = self._session.exec(stmt)
-        items = list(results.scalars().all())
+        items = list(results.all())
 
         return items, total
 

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Registry — Certificate Manager{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Certificate Registry</h1>
+        <div class="flex gap-2">
+            <a href="/api/v1/certificates/export?track={{ track }}&search={{ search }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Export CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text" name="search" value="{{ search }}" placeholder="Student name or ID..."
+                    hx-get="/partials/registry-table" hx-trigger="keyup changed delay:300ms" hx-target="#cert-table" hx-include="[name='track']"
+                    class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Track</label>
+                <select name="track"
+                    hx-get="/partials/registry-table" hx-trigger="change" hx-target="#cert-table" hx-include="[name='search']"
+                    class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">All Tracks</option>
+                    <option value="html" {% if track == "html" %}selected{% endif %}>HTML</option>
+                    <option value="css" {% if track == "css" %}selected{% endif %}>CSS</option>
+                    <option value="javascript" {% if track == "javascript" %}selected{% endif %}>JavaScript</option>
+                    <option value="python" {% if track == "python" %}selected{% endif %}>Python</option>
+                    <option value="advanced" {% if track == "advanced" %}selected{% endif %}>Advanced</option>
+                    <option value="problem_solving" {% if track == "problem_solving" %}selected{% endif %}>Problem Solving</option>
+                    <option value="robotics-wedo" {% if track == "robotics-wedo" %}selected{% endif %}>Robotics WeDo 2.0</option>
+                    <option value="robotics-spike-essential" {% if track == "robotics-spike-essential" %}selected{% endif %}>Robotics SPIKE Essential</option>
+                    <option value="robotics-spike-prime" {% if track == "robotics-spike-prime" %}selected{% endif %}>Robotics SPIKE Prime</option>
+                    <option value="robotics-ev3" {% if track == "robotics-ev3" %}selected{% endif %}>Robotics EV3</option>
+                    <option value="robotics-arduino" {% if track == "robotics-arduino" %}selected{% endif %}>Robotics Arduino</option>
+                    <option value="scratch" {% if track == "scratch" %}selected{% endif %}>Scratch</option>
+                    <option value="scratch-jr" {% if track == "scratch-jr" %}selected{% endif %}>Scratch Jr</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <span class="text-sm text-gray-500">{{ total }} certificates found</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div id="cert-table">
+        {% include "partials/cert_table.html" %}
+    </div>
+</div>
+{% endblock %}

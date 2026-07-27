@@ -1,0 +1,69 @@
+<div class="bg-white shadow rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            {% for cert in certificates %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ cert.cert_id }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ cert.student_name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.course_name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.level }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.issue_date }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                    <a href="/certificates/{{ cert.cert_id }}" class="text-indigo-600 hover:text-indigo-500">View</a>
+                    <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" class="text-green-600 hover:text-green-500">PDF</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not certificates %}
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500">
+                    No certificates found.
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div class="flex-1 flex justify-between sm:hidden">
+            {% if page > 1 %}
+            <a href="?page={{ page - 1 }}&search={{ search }}&track={{ track }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</a>
+            {% endif %}
+            {% if page < total_pages %}
+            <a href="?page={{ page + 1 }}&search={{ search }}&track={{ track }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</a>
+            {% endif %}
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Showing <span class="font-medium">{{ (page - 1) * page_size + 1 }}</span>
+                    to <span class="font-medium">{{ [page * page_size, total] | min }}</span>
+                    of <span class="font-medium">{{ total }}</span> results
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    {% for p in range(1, total_pages + 1) %}
+                    <a href="?page={{ p }}&search={{ search }}&track={{ track }}"
+                        class="relative inline-flex items-center px-4 py-2 border text-sm font-medium {% if p == page %}bg-indigo-50 border-indigo-500 text-indigo-600{% else %}bg-white border-gray-300 text-gray-500 hover:bg-gray-50{% endif %}">
+                        {{ p }}
+                    </a>
+                    {% endfor %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

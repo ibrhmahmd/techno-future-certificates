@@ -19,6 +19,7 @@ from app.modules.certificates.schemas.certificate_schemas import (
 )
 from app.modules.certificates.schemas.response_schemas import CertificateListResponseDTO
 from app.modules.certificates.services.certificate_crud_service import CertificateCrudService
+from app.database import get_db
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ router = APIRouter(tags=["Certificates"])
 
 
 def get_certificate_service(
-    session: Session = Depends(),
+    session: Session = Depends(get_db),
 ) -> CertificateCrudService:
     """Factory for CertificateCrudService — follows existing dependency pattern."""
     uow = CertificatesUnitOfWork(session)
@@ -49,6 +50,61 @@ def generate_certificate(
     result = service.generate(dto, actor_name="system")
     return {"success": True, "data": result.model_dump(), "message": "Certificate generated successfully"}
 
+
+# ─── US3: Browse & Export (static routes BEFORE dynamic {cert_id}) ───
+
+@router.get(
+    "/certificates/export",
+    summary="Export certificates as CSV",
+)
+def export_csv(
+    track: Optional[str] = None,
+    search: Optional[str] = None,
+    include_revoked: bool = False,
+    service: CertificateCrudService = Depends(get_certificate_service),
+    # current_user: User = Depends(require_permission(Permissions.GENERATE)),
+):
+    """Export filtered certificates as a CSV file download."""
+    csv_bytes = service.export_csv(track=track, search=search, include_revoked=include_revoked)
+    return StreamingResponse(
+        iter([csv_bytes]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=certificates.csv"},
+    )
+
+
+@router.get(
+    "/certificates",
+    response_model=dict,
+    summary="List certificates with pagination and filters",
+)
+def list_certificates(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    search: Optional[str] = Query(None),
+    track: Optional[str] = Query(None),
+    include_revoked: bool = Query(False),
+    service: CertificateCrudService = Depends(get_certificate_service),
+    # current_user: User = Depends(get_current_user),
+):
+    """List all certificates with pagination, search, and track filter."""
+    result = service.list_certificates(
+        page=page,
+        page_size=page_size,
+        search=search,
+        track=track,
+        include_revoked=include_revoked,
+    )
+    return {
+        "success": True,
+        "data": [item.model_dump() for item in result.items],
+        "total": result.total,
+        "skip": (result.page - 1) * result.page_size,
+        "limit": result.page_size,
+    }
+
+
+# ─── Dynamic {cert_id} routes (after static routes) ───
 
 @router.get(
     "/certificates/{cert_id}/pdf",
@@ -108,59 +164,6 @@ def verify_certificate(
             media_type="application/json",
         )
     return {"success": True, "data": result.model_dump(), "message": "Certificate verified"}
-
-
-# ─── US3: Browse Certificate Registry ───
-
-@router.get(
-    "/certificates",
-    response_model=dict,
-    summary="List certificates with pagination and filters",
-)
-def list_certificates(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
-    search: Optional[str] = Query(None),
-    track: Optional[str] = Query(None),
-    include_revoked: bool = Query(False),
-    service: CertificateCrudService = Depends(get_certificate_service),
-    # current_user: User = Depends(get_current_user),
-):
-    """List all certificates with pagination, search, and track filter."""
-    result = service.list_certificates(
-        page=page,
-        page_size=page_size,
-        search=search,
-        track=track,
-        include_revoked=include_revoked,
-    )
-    return {
-        "success": True,
-        "data": [item.model_dump() for item in result.items],
-        "total": result.total,
-        "skip": (result.page - 1) * result.page_size,
-        "limit": result.page_size,
-    }
-
-
-@router.post(
-    "/certificates/export",
-    summary="Export certificates as CSV",
-)
-def export_csv(
-    track: Optional[str] = None,
-    search: Optional[str] = None,
-    include_revoked: bool = False,
-    service: CertificateCrudService = Depends(get_certificate_service),
-    # current_user: User = Depends(get_current_user),
-):
-    """Export filtered certificates as a CSV file download."""
-    csv_bytes = service.export_csv(track=track, search=search, include_revoked=include_revoked)
-    return StreamingResponse(
-        iter([csv_bytes]),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=certificates.csv"},
-    )
 
 
 # ─── US4: Revoke Certificate ───

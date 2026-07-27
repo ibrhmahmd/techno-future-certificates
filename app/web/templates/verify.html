@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Verify Certificate — Certificate Manager{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0 max-w-lg mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Verify Certificate</h1>
+
+    <div class="bg-white shadow rounded-lg p-6">
+        <form hx-get="/partials/verify-result" hx-target="#verify-result" hx-swap="innerHTML" hx-trigger="submit" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Certificate ID</label>
+                <input type="text" name="cert_id" value="{{ cert_id }}" placeholder="TKTF-XXXX-YYYYMMDD-NNNN" required
+                    class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-mono">
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Verify
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="verify-result" class="mt-6">
+        {% if result %}
+            {% include "partials/verify_result.html" %}
+        {% elif error %}
+            {% include "partials/verify_result.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

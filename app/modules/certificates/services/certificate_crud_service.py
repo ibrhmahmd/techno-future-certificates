@@ -146,7 +146,7 @@ class CertificateCrudService:
             raise HTTPException(status_code=404, detail="Certificate not found")
 
         custom_color = cert.custom_color or get_track_color(cert.course_track)
-        html = render_html(
+        return render_pdf(
             student_name=cert.student_name,
             course_name=cert.course_name,
             course_track=cert.course_track,
@@ -158,8 +158,6 @@ class CertificateCrudService:
             director=cert.director,
             custom_color=custom_color,
         )
-
-        return render_pdf(html)
 
     def download_html(self, cert_id: str) -> str:
         """Generate HTML for a certificate."""

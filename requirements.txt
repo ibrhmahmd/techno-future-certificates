@@ -4,4 +4,7 @@ sqlmodel
 psycopg2-binary
 pydantic
 qrcode[pil]
-xhtml2pdf
+playwright
+jinja2
+python-multipart
+httpx

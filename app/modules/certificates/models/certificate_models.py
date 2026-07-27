@@ -5,8 +5,7 @@ Certificate domain models — SQLModel entities.
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from sqlalchemy import Column, Index, String, UniqueConstraint
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, Index, JSON, String, UniqueConstraint
 from sqlmodel import Field, SQLModel
 
 
@@ -55,4 +54,4 @@ class CertificateAuditLog(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
-    action_metadata: Optional[dict] = Field(default=None, sa_column=Column("metadata", JSONB))
+    action_metadata: Optional[dict] = Field(default=None, sa_column=Column("metadata", JSON))

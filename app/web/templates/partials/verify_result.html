@@ -1,0 +1,43 @@
+{% if result %}
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="flex items-center mb-4">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if result.revoked %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+            {% if result.revoked %}Revoked{% else %}Valid{% endif %}
+        </span>
+    </div>
+    <dl class="grid grid-cols-2 gap-4">
+        <dt class="text-sm text-gray-500">Certificate ID</dt>
+        <dd class="text-sm font-mono text-gray-900">{{ result.cert_id }}</dd>
+        <dt class="text-sm text-gray-500">Student</dt>
+        <dd class="text-sm text-gray-900">{{ result.student_name }}</dd>
+        <dt class="text-sm text-gray-500">Course</dt>
+        <dd class="text-sm text-gray-900">{{ result.course_name }}</dd>
+        <dt class="text-sm text-gray-500">Level</dt>
+        <dd class="text-sm text-gray-900">{{ result.level }}</dd>
+        <dt class="text-sm text-gray-500">Date</dt>
+        <dd class="text-sm text-gray-900">{{ result.issue_date }}</dd>
+        <dt class="text-sm text-gray-500">Branch</dt>
+        <dd class="text-sm text-gray-900">{{ result.branch }}</dd>
+        {% if result.instructor %}
+        <dt class="text-sm text-gray-500">Instructor</dt>
+        <dd class="text-sm text-gray-900">{{ result.instructor }}</dd>
+        {% endif %}
+        {% if result.director %}
+        <dt class="text-sm text-gray-500">Director</dt>
+        <dd class="text-sm text-gray-900">{{ result.director }}</dd>
+        {% endif %}
+        {% if result.revoked %}
+        <dt class="text-sm text-gray-500">Revoked Reason</dt>
+        <dd class="text-sm text-red-600">{{ result.revoked_reason }}</dd>
+        {% endif %}
+    </dl>
+</div>
+{% elif error %}
+<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+    <p class="text-sm text-red-600">{{ error }}</p>
+</div>
+{% else %}
+<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+    <p class="text-sm text-yellow-600">Enter a certificate ID and click Verify.</p>
+</div>
+{% endif %}

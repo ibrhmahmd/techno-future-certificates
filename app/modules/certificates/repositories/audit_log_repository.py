@@ -39,4 +39,4 @@ class CertificateAuditLogRepository:
             CertificateAuditLog.cert_id == cert_id
         ).order_by(CertificateAuditLog.timestamp.desc())
         results = self._session.exec(stmt)
-        return list(results.scalars().all())
+        return list(results.all())

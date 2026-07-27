@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ cert.cert_id }} — Certificate Detail{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0 max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Certificate Detail</h1>
+        <div class="flex gap-2">
+            <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                Download PDF
+            </a>
+            <a href="/api/v1/certificates/{{ cert.cert_id }}/html" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Download HTML
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center mb-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if cert.revoked_at %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+                {% if cert.revoked_at %}Revoked{% else %}Active{% endif %}
+            </span>
+            <span class="ml-2 text-sm font-mono text-gray-500">{{ cert.cert_id }}</span>
+        </div>
+
+        <dl class="grid grid-cols-2 gap-4">
+            <dt class="text-sm text-gray-500">Student</dt>
+            <dd class="text-sm font-medium text-gray-900">{{ cert.student_name }}</dd>
+            <dt class="text-sm text-gray-500">Course</dt>
+            <dd class="text-sm text-gray-900">{{ cert.course_name }}</dd>
+            <dt class="text-sm text-gray-500">Level</dt>
+            <dd class="text-sm text-gray-900">{{ cert.level }}</dd>
+            <dt class="text-sm text-gray-500">Issue Date</dt>
+            <dd class="text-sm text-gray-900">{{ cert.issue_date }}</dd>
+            <dt class="text-sm text-gray-500">Branch</dt>
+            <dd class="text-sm text-gray-900">{{ cert.branch }}</dd>
+            {% if cert.instructor %}
+            <dt class="text-sm text-gray-500">Instructor</dt>
+            <dd class="text-sm text-gray-900">{{ cert.instructor }}</dd>
+            {% endif %}
+            {% if cert.director %}
+            <dt class="text-sm text-gray-500">Director</dt>
+            <dd class="text-sm text-gray-900">{{ cert.director }}</dd>
+            {% endif %}
+            <dt class="text-sm text-gray-500">Created</dt>
+            <dd class="text-sm text-gray-900">{{ cert.created_at }}</dd>
+            {% if cert.revoked_at %}
+            <dt class="text-sm text-gray-500">Revoked At</dt>
+            <dd class="text-sm text-red-600">{{ cert.revoked_at }}</dd>
+            <dt class="text-sm text-gray-500">Revoked Reason</dt>
+            <dd class="text-sm text-red-600">{{ cert.revoked_reason }}</dd>
+            {% endif %}
+        </dl>
+
+        <!-- Preview -->
+        <div class="mt-6 border-t pt-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Preview</h3>
+            <iframe src="/api/v1/certificates/{{ cert.cert_id }}/html" class="w-full h-96 border rounded-md"></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
