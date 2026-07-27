@@ -1,32 +1,33 @@
-<div class="bg-white shadow rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+<div style="background: var(--surface-container-lowest); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); overflow: hidden;">
+    <table class="min-w-full" style="border-collapse: collapse;">
+        <thead style="background: var(--surface);">
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">ID</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Student</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Course</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Level</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Date</th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Actions</th>
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody style="background: var(--surface-container-lowest);">
             {% for cert in certificates %}
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ cert.cert_id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ cert.student_name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.course_name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.level }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ cert.issue_date }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                    <a href="/certificates/{{ cert.cert_id }}" class="text-indigo-600 hover:text-indigo-500">View</a>
-                    <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" class="text-green-600 hover:text-green-500">PDF</a>
+            <tr style="border-top: 1px solid var(--surface-container);" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface-container-lowest)'">
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; font-family: 'JetBrains Mono', monospace; color: var(--on-background);">{{ cert.cert_id }}</td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--primary);">{{ cert.student_name }}</td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.course_name }}</td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.level }}</td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.issue_date }}</td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem;">
+                    <a href="/certificates/{{ cert.cert_id }}" style="color: var(--secondary); text-decoration: none;" onmouseover="this.style.color='#004d46'" onmouseout="this.style.color='var(--secondary)'">View</a>
+                    <span style="margin: 0 0.5rem; color: var(--surface-container);">|</span>
+                    <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" download style="color: var(--secondary); text-decoration: none;" onmouseover="this.style.color='#004d46'" onmouseout="this.style.color='var(--secondary)'">PDF</a>
                 </td>
             </tr>
             {% endfor %}
             {% if not certificates %}
             <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500">
+                <td colspan="6" style="padding: 2rem; text-align: center; font-size: 0.875rem; color: var(--on-surface-muted);">
                     No certificates found.
                 </td>
             </tr>
@@ -36,28 +37,28 @@
 
     <!-- Pagination -->
     {% if total_pages > 1 %}
-    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+    <div style="background: var(--surface-container-lowest); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--surface-container);">
         <div class="flex-1 flex justify-between sm:hidden">
             {% if page > 1 %}
-            <a href="?page={{ page - 1 }}&search={{ search }}&track={{ track }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</a>
+            <a href="?page={{ page - 1 }}&search={{ search }}&track={{ track }}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border: 1px solid var(--surface-container); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: var(--on-background); background: var(--surface-container-lowest); text-decoration: none;">Previous</a>
             {% endif %}
             {% if page < total_pages %}
-            <a href="?page={{ page + 1 }}&search={{ search }}&track={{ track }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</a>
+            <a href="?page={{ page + 1 }}&search={{ search }}&track={{ track }}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border: 1px solid var(--surface-container); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: var(--on-background); background: var(--surface-container-lowest); text-decoration: none;">Next</a>
             {% endif %}
         </div>
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-                <p class="text-sm text-gray-700">
-                    Showing <span class="font-medium">{{ (page - 1) * page_size + 1 }}</span>
-                    to <span class="font-medium">{{ [page * page_size, total] | min }}</span>
-                    of <span class="font-medium">{{ total }}</span> results
+                <p style="font-size: 0.875rem; color: var(--on-background);">
+                    Showing <span style="font-weight: 500;">{{ (page - 1) * page_size + 1 }}</span>
+                    to <span style="font-weight: 500;">{{ [page * page_size, total] | min }}</span>
+                    of <span style="font-weight: 500;">{{ total }}</span> results
                 </p>
             </div>
             <div>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                <nav style="display: inline-flex; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--surface-container);">
                     {% for p in range(1, total_pages + 1) %}
                     <a href="?page={{ p }}&search={{ search }}&track={{ track }}"
-                        class="relative inline-flex items-center px-4 py-2 border text-sm font-medium {% if p == page %}bg-indigo-50 border-indigo-500 text-indigo-600{% else %}bg-white border-gray-300 text-gray-500 hover:bg-gray-50{% endif %}">
+                        style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; border: none; border-right: 1px solid var(--surface-container); text-decoration: none; {% if p == page %}background: var(--secondary-container); color: var(--on-secondary-container);{% else %}background: var(--surface-container-lowest); color: var(--on-surface-muted);{% endif %}">
                         {{ p }}
                     </a>
                     {% endfor %}

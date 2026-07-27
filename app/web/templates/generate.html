@@ -2,72 +2,74 @@
 {% block title %}Generate Certificate — Certificate Manager{% endblock %}
 {% block content %}
 <div class="px-4 sm:px-0 max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Generate Certificate</h1>
+    <h1 style="font-family: 'Space Grotesk', sans-serif; color: var(--primary); font-weight: 700; font-size: 1.5rem; margin-bottom: 1.5rem;">Generate Certificate</h1>
 
-    <form id="gen-form" hx-post="/partials/generate-result" hx-target="#gen-result" hx-swap="innerHTML" hx-indicator="#gen-btn" class="bg-white shadow rounded-lg p-6 space-y-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Student Name *</label>
-            <input type="text" name="student_name" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-        </div>
+    <form id="gen-form" hx-post="/partials/generate-result" hx-target="#gen-result" hx-swap="innerHTML" hx-indicator="#gen-btn" style="background: var(--surface-container-lowest); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="space-y-4">
+            <div>
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Student Name *</label>
+                <input type="text" name="student_name" required style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+            </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Course Track *</label>
-                <select name="course_track" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <option value="">Select track...</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                    <option value="advanced">Advanced</option>
-                    <option value="problem_solving">Problem Solving</option>
-                    <option value="robotics-wedo">Robotics WeDo 2.0</option>
-                    <option value="robotics-spike-essential">Robotics SPIKE Essential</option>
-                    <option value="robotics-spike-prime">Robotics SPIKE Prime</option>
-                    <option value="robotics-ev3">Robotics EV3</option>
-                    <option value="robotics-arduino">Robotics Arduino</option>
-                    <option value="scratch">Scratch</option>
-                    <option value="scratch-jr">Scratch Jr</option>
-                </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Course Track *</label>
+                    <select name="course_track" required style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                        <option value="">Select track...</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="problem_solving">Problem Solving</option>
+                        <option value="robotics-wedo">Robotics WeDo 2.0</option>
+                        <option value="robotics-spike-essential">Robotics SPIKE Essential</option>
+                        <option value="robotics-spike-prime">Robotics SPIKE Prime</option>
+                        <option value="robotics-ev3">Robotics EV3</option>
+                        <option value="robotics-arduino">Robotics Arduino</option>
+                        <option value="scratch">Scratch</option>
+                        <option value="scratch-jr">Scratch Jr</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Level *</label>
+                    <select name="level" required style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                        <option value="">Select level...</option>
+                        <option value="Level 1 — Junior">Level 1 — Junior</option>
+                        <option value="Level 2 — Intermediate">Level 2 — Intermediate</option>
+                        <option value="Level 3 — Advanced">Level 3 — Advanced</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Level *</label>
-                <select name="level" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <option value="">Select level...</option>
-                    <option value="Level 1 — Junior">Level 1 — Junior</option>
-                    <option value="Level 2 — Intermediate">Level 2 — Intermediate</option>
-                    <option value="Level 3 — Advanced">Level 3 — Advanced</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Issue Date *</label>
-                <input type="date" name="issue_date" required class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Issue Date *</label>
+                    <input type="date" name="issue_date" required style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Branch *</label>
+                    <input type="text" name="branch" required placeholder="e.g. Heliopolis" style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Branch *</label>
-                <input type="text" name="branch" required placeholder="e.g. Heliopolis" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Instructor</label>
-                <input type="text" name="instructor" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Instructor</label>
+                    <input type="text" name="instructor" style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Director</label>
+                    <input type="text" name="director" style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Director</label>
-                <input type="text" name="director" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-        </div>
 
-        <div class="flex justify-end pt-2">
-            <button id="gen-btn" type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <span class="htmx-indicator mr-2">Generating...</span>
-                Generate Certificate
-            </button>
+            <div class="flex justify-end pt-2">
+                <button id="gen-btn" type="submit" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: #ffffff; background: var(--secondary); border: none; cursor: pointer;" onmouseover="this.style.background='#004d46'" onmouseout="this.style.background='#006a61'">
+                    <span class="htmx-indicator mr-2">Generating...</span>
+                    Generate Certificate
+                </button>
+            </div>
         </div>
     </form>
 

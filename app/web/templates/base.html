@@ -4,37 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Certificate Manager{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <script src="https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js"></script>
     <style>
+        :root {
+            --primary: #000000;
+            --primary-container: #131b2e;
+            --secondary: #006a61;
+            --secondary-fixed: #89f5e7;
+            --secondary-container: #e0f5f1;
+            --on-secondary-container: #004d46;
+            --tertiary: #7671ff;
+            --tertiary-light: #a5a1ff;
+            --surface: #f8f9ff;
+            --surface-container: #e5eeff;
+            --surface-container-low: #eff4ff;
+            --surface-container-lowest: #ffffff;
+            --on-background: #0b1c30;
+            --on-surface-muted: #5A6070;
+            --on-surface-variant: #7a8090;
+            --error: #D32F2F;
+            --error-container: #FFF5F5;
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--surface);
+            color: var(--on-background);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        code, .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         .htmx-indicator { display: none; }
         .htmx-request .htmx-indicator { display: inline-block; }
         .htmx-request.htmx-indicator { display: inline-block; }
     </style>
 </head>
-<body class="h-full bg-gray-50">
+<body class="h-full">
     <div class="min-h-full">
         <!-- Nav -->
-        <nav class="bg-white shadow-sm border-b border-gray-200">
+        <nav style="background: var(--surface-container-lowest); border-bottom: 1px solid var(--surface-container);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <div class="flex-shrink-0 flex items-center">
-                            <span class="text-xl font-bold text-indigo-600">TKTF</span>
-                            <span class="ml-2 text-sm text-gray-500">Certificate Manager</span>
+                            <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--secondary);">TKTF</span>
+                            <span class="ml-2 text-sm" style="color: var(--on-surface-muted);">Certificate Manager</span>
                         </div>
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                            <a href="/" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 {% if request.url.path == '/' %}border-indigo-500{% else %}border-transparent{% endif %}">
+                            <a href="/" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: var(--on-background); border-bottom: 2px solid {% if request.url.path == '/' %}var(--secondary){% else %}transparent{% endif %};">
                                 Dashboard
                             </a>
-                            <a href="/generate" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 {% if request.url.path == '/generate' %}border-indigo-500 text-gray-900{% else %}border-transparent{% endif %}">
+                            <a href="/generate" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: {% if request.url.path == '/generate' %}var(--on-background){% else %}var(--on-surface-muted){% endif %}; border-bottom: 2px solid {% if request.url.path == '/generate' %}var(--secondary){% else %}transparent{% endif %};">
                                 Generate
                             </a>
-                            <a href="/registry" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 {% if request.url.path == '/registry' %}border-indigo-500 text-gray-900{% else %}border-transparent{% endif %}">
+                            <a href="/registry" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: {% if request.url.path == '/registry' %}var(--on-background){% else %}var(--on-surface-muted){% endif %}; border-bottom: 2px solid {% if request.url.path == '/registry' %}var(--secondary){% else %}transparent{% endif %};">
                                 Registry
                             </a>
-                            <a href="/verify" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 border-transparent">
+                            <a href="/verify" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: var(--on-surface-muted); border-bottom: 2px solid transparent;">
                                 Verify
                             </a>
                         </div>
