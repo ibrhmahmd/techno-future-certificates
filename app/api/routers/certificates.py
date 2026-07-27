@@ -115,20 +115,27 @@ def download_pdf(
     service: CertificateCrudService = Depends(get_certificate_service),
 ):
     """Download the certificate PDF. Returns HTML fallback on render failure."""
+    cert = service.get_by_id(cert_id)
+    date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
+    safe_name = (cert.student_name.replace(" ", "_") if cert else cert_id)
+    safe_course = (cert.course_name.replace(" ", "_") if cert else "")
+    filename = f"{safe_name}_{safe_course}_{date_str}.pdf" if cert else f"{cert_id}.pdf"
+
     try:
         pdf_bytes = service.download_pdf(cert_id)
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
-            headers={"Content-Disposition": f'attachment; filename="{cert_id}.pdf"'},
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
         )
     except Exception as exc:
         log.warning("PDF render failed for %s: %s", cert_id, exc)
         html = service.download_html(cert_id)
+        html_filename = filename.rsplit(".", 1)[0] + ".html"
         return Response(
             content=html.encode("utf-8"),
             media_type="text/html",
-            headers={"Content-Disposition": f'attachment; filename="{cert_id}.html"'},
+            headers={"Content-Disposition": f'attachment; filename="{html_filename}"'},
         )
 
 
@@ -141,10 +148,16 @@ def download_html(
     service: CertificateCrudService = Depends(get_certificate_service),
 ):
     """Download the certificate as a self-contained HTML file."""
+    cert = service.get_by_id(cert_id)
+    date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
+    safe_name = (cert.student_name.replace(" ", "_") if cert else cert_id)
+    safe_course = (cert.course_name.replace(" ", "_") if cert else "")
+    filename = f"{safe_name}_{safe_course}_{date_str}.html" if cert else f"{cert_id}.html"
+
     html = service.download_html(cert_id)
     return HTMLResponse(
         content=html,
-        headers={"Content-Disposition": f'attachment; filename="{cert_id}.html"'},
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 
