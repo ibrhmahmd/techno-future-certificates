@@ -125,7 +125,11 @@ def download_pdf(
     except Exception as exc:
         log.warning("PDF render failed for %s: %s", cert_id, exc)
         html = service.download_html(cert_id)
-        return HTMLResponse(content=html)
+        return Response(
+            content=html.encode("utf-8"),
+            media_type="text/html",
+            headers={"Content-Disposition": f'attachment; filename="{cert_id}.html"'},
+        )
 
 
 @router.get(
