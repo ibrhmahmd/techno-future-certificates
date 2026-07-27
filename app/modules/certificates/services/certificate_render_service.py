@@ -685,7 +685,7 @@ def render_pdf(
             if steel_api_key:
                 log.info("Using Steel cloud browser for PDF rendering")
                 steel_client, steel_session = _get_steel_session()
-                cdp_url = steel_session.cdp_url
+                cdp_url = steel_session.websocket_url
                 browser = pw.chromium.connect_over_cdp(cdp_url)
             else:
                 log.info("Using local Chromium for PDF rendering")
