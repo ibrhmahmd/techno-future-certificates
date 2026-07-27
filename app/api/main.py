@@ -46,6 +46,10 @@ def create_app() -> FastAPI:
     )
     app.include_router(web_router)
 
+    @app.get("/")
+    def root():
+        return {"status": "ok", "message": "Techno Future Certificate Service"}
+
     @app.get("/health")
     def health_check():
         return {"status": "ok"}
