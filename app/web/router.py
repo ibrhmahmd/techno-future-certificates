@@ -5,6 +5,7 @@ Web routes — Jinja2 pages served by FastAPI.
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+import os
 from pathlib import Path
 from typing import Optional
 import httpx
@@ -12,7 +13,7 @@ import httpx
 router = APIRouter(tags=["Web"])
 templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 
-API_BASE = "http://localhost:8000"
+API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
 _client = httpx.AsyncClient(trust_env=False, base_url=API_BASE, timeout=10.0)
 
 
