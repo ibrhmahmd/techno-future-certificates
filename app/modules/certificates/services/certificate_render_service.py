@@ -635,7 +635,7 @@ def _get_steel_session():
     if not api_key:
         return None, None
 
-    client = Steel(api_key=api_key)
+    client = Steel(steel_api_key=api_key)
     session = client.sessions.create()
     return client, session
 
