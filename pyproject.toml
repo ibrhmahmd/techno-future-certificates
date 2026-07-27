@@ -1,8 +1,0 @@
-[project]
-name = "techno-future-certs"
-version = "1.0.0"
-description = "Certificate generation, verification, and management for Techno Future"
-requires-python = ">=3.11"
-
-[tool.fastapi]
-entrypoint = "app.api.main:app"
