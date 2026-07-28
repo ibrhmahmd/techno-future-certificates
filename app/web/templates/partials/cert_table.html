@@ -1,33 +1,32 @@
-<div style="background: var(--surface-container-lowest); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); overflow: hidden;">
-    <table class="min-w-full" style="border-collapse: collapse;">
-        <thead style="background: var(--surface);">
+<div class="pe-card" style="overflow: hidden;">
+    <table class="pe-table">
+        <thead>
             <tr>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">ID</th>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Student</th>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Course</th>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Level</th>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Date</th>
-                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--on-surface-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace;">Actions</th>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Level</th>
+                <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
-        <tbody style="background: var(--surface-container-lowest);">
+        <tbody>
             {% for cert in certificates %}
-            <tr style="border-top: 1px solid var(--surface-container);" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface-container-lowest)'">
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; font-family: 'JetBrains Mono', monospace; color: var(--on-background);">{{ cert.cert_id }}</td>
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--primary);">{{ cert.student_name }}</td>
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.course_name }}</td>
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.level }}</td>
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: var(--on-surface-muted);">{{ cert.issue_date }}</td>
-                <td style="padding: 1rem 1.5rem; font-size: 0.875rem;">
-                    <a href="/certificates/{{ cert.cert_id }}" style="color: var(--secondary); text-decoration: none;" onmouseover="this.style.color='#004d46'" onmouseout="this.style.color='var(--secondary)'">View</a>
-                    <span style="margin: 0 0.5rem; color: var(--surface-container);">|</span>
-                    <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" download style="color: var(--secondary); text-decoration: none;" onmouseover="this.style.color='#004d46'" onmouseout="this.style.color='var(--secondary)'">PDF</a>
+            <tr>
+                <td style="font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: var(--on-background);">{{ cert.cert_id }}</td>
+                <td style="color: var(--on-background);">{{ cert.student_name }}</td>
+                <td style="color: var(--on-surface-variant);">{{ cert.course_name }}</td>
+                <td style="color: var(--on-surface-variant);">{{ cert.level }}</td>
+                <td style="color: var(--on-surface-variant);">{{ cert.issue_date }}</td>
+                <td>
+                    <a href="/certificates/{{ cert.cert_id }}" class="pe-link" style="margin-right: 0.75rem;">View</a>
+                    <a href="/api/v1/certificates/{{ cert.cert_id }}/pdf" download class="pe-link">PDF</a>
                 </td>
             </tr>
             {% endfor %}
             {% if not certificates %}
             <tr>
-                <td colspan="6" style="padding: 2rem; text-align: center; font-size: 0.875rem; color: var(--on-surface-muted);">
+                <td colspan="6" style="padding: 2rem; text-align: center; color: var(--on-surface-variant);">
                     No certificates found.
                 </td>
             </tr>
@@ -37,28 +36,28 @@
 
     <!-- Pagination -->
     {% if total_pages > 1 %}
-    <div style="background: var(--surface-container-lowest); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--surface-container);">
+    <div style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; background: var(--surface);">
         <div class="flex-1 flex justify-between sm:hidden">
             {% if page > 1 %}
-            <a href="?page={{ page - 1 }}&search={{ search }}&track={{ track }}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border: 1px solid var(--surface-container); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: var(--on-background); background: var(--surface-container-lowest); text-decoration: none;">Previous</a>
+            <a href="?page={{ page - 1 }}&search={{ search }}&track={{ track }}" class="pe-btn-ghost" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;">Previous</a>
             {% endif %}
             {% if page < total_pages %}
-            <a href="?page={{ page + 1 }}&search={{ search }}&track={{ track }}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border: 1px solid var(--surface-container); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: var(--on-background); background: var(--surface-container-lowest); text-decoration: none;">Next</a>
+            <a href="?page={{ page + 1 }}&search={{ search }}&track={{ track }}" class="pe-btn-ghost" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;">Next</a>
             {% endif %}
         </div>
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-                <p style="font-size: 0.875rem; color: var(--on-background);">
-                    Showing <span style="font-weight: 500;">{{ (page - 1) * page_size + 1 }}</span>
-                    to <span style="font-weight: 500;">{{ [page * page_size, total] | min }}</span>
-                    of <span style="font-weight: 500;">{{ total }}</span> results
+                <p style="font-size: 0.8125rem; color: var(--on-surface-variant);">
+                    Showing <span style="font-weight: 600; color: var(--on-background);">{{ (page - 1) * page_size + 1 }}</span>
+                    to <span style="font-weight: 600; color: var(--on-background);">{{ [page * page_size, total] | min }}</span>
+                    of <span style="font-weight: 600; color: var(--on-background);">{{ total }}</span> results
                 </p>
             </div>
             <div>
-                <nav style="display: inline-flex; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--surface-container);">
+                <nav style="display: inline-flex; border-radius: var(--radius-md); overflow: hidden;">
                     {% for p in range(1, total_pages + 1) %}
                     <a href="?page={{ p }}&search={{ search }}&track={{ track }}"
-                        style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; border: none; border-right: 1px solid var(--surface-container); text-decoration: none; {% if p == page %}background: var(--secondary-container); color: var(--on-secondary-container);{% else %}background: var(--surface-container-lowest); color: var(--on-surface-muted);{% endif %}">
+                        style="display: inline-flex; align-items: center; padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; text-decoration: none; {% if p == page %}background: var(--secondary-container); color: var(--on-secondary-container);{% else %}background: var(--surface-container-lowest); color: var(--on-surface-variant);{% endif %}">
                         {{ p }}
                     </a>
                     {% endfor %}

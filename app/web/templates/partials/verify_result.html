@@ -1,43 +1,43 @@
 {% if result %}
-<div style="background: var(--surface-container-lowest); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); padding: 1.5rem;">
-    <div class="flex items-center mb-4">
-        <span style="display: inline-flex; align-items: center; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; {% if result.revoked %}background: var(--error-container); color: var(--error);{% else %}background: var(--secondary-container); color: var(--on-secondary-container);{% endif %}">
+<div class="pe-card" style="padding: 1.5rem;">
+    <div class="flex items-center" style="margin-bottom: 1.25rem;">
+        <span class="pe-chip {% if result.revoked %}pe-chip-error{% else %}pe-chip-success{% endif %}">
             {% if result.revoked %}Revoked{% else %}Valid{% endif %}
         </span>
     </div>
-    <dl class="grid grid-cols-2 gap-4">
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Certificate ID</dt>
-        <dd style="font-size: 0.875rem; font-family: 'JetBrains Mono', monospace; color: var(--on-background);">{{ result.cert_id }}</dd>
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Student</dt>
+    <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Certificate ID</dt>
+        <dd style="font-size: 0.875rem; font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: var(--on-background);">{{ result.cert_id }}</dd>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Student</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.student_name }}</dd>
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Course</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Course</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.course_name }}</dd>
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Level</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Level</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.level }}</dd>
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Date</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Date</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.issue_date }}</dd>
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Branch</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Branch</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.branch }}</dd>
         {% if result.instructor %}
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Instructor</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Instructor</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.instructor }}</dd>
         {% endif %}
         {% if result.director %}
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Director</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Director</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.director }}</dd>
         {% endif %}
         {% if result.revoked %}
-        <dt style="font-size: 0.875rem; color: var(--on-surface-muted);">Revoked Reason</dt>
+        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Revoked Reason</dt>
         <dd style="font-size: 0.875rem; color: var(--error);">{{ result.revoked_reason }}</dd>
         {% endif %}
     </dl>
 </div>
 {% elif error %}
-<div style="background: var(--error-container); border: 1px solid #fecaca; border-radius: var(--radius-lg); padding: 1rem;">
+<div style="background: var(--error-container); border-radius: var(--radius-lg); padding: 1rem;">
     <p style="font-size: 0.875rem; color: var(--error);">{{ error }}</p>
 </div>
 {% else %}
-<div style="background: var(--surface); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); padding: 1rem;">
+<div style="background: var(--surface-container-low); border-radius: var(--radius-lg); padding: 1rem;">
     <p style="font-size: 0.875rem; color: var(--on-surface-variant);">Enter a certificate ID and click Verify.</p>
 </div>
 {% endif %}

@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Verify Certificate — Certificate Manager{% endblock %}
 {% block content %}
-<div class="px-4 sm:px-0 max-w-lg mx-auto">
-    <h1 style="font-family: 'Space Grotesk', sans-serif; color: var(--primary); font-weight: 700; font-size: 1.5rem; margin-bottom: 1.5rem;">Verify Certificate</h1>
+<div style="max-width: 32rem; margin: 0 auto; padding: 0 1rem;">
+    <h1 style="font-size: 1.75rem; font-weight: 600; color: var(--on-background); letter-spacing: -0.03em; margin-bottom: 2rem;">Verify Certificate</h1>
 
-    <div style="background: var(--surface-container-lowest); border: 1px solid var(--surface-container); border-radius: var(--radius-lg); padding: 1.5rem;">
-        <form hx-get="/partials/verify-result" hx-target="#verify-result" hx-swap="innerHTML" hx-trigger="submit" class="space-y-4">
+    <div class="pe-card" style="padding: 2rem;">
+        <form hx-get="/partials/verify-result" hx-target="#verify-result" hx-swap="innerHTML" hx-trigger="submit" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div>
-                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: var(--on-background); margin-bottom: 0.25rem;">Certificate ID</label>
+                <label class="pe-input-label">Certificate ID</label>
                 <input type="text" name="cert_id" value="{{ cert_id }}" placeholder="TKTF-XXXX-YYYYMMDD-NNNN" required
-                    style="display: block; width: 100%; border: 1px solid var(--surface-container); border-radius: var(--radius-md); padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--on-background); background: var(--surface-container-lowest); outline: none; font-family: 'JetBrains Mono', monospace;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='var(--surface-container)'">
+                    class="pe-input" style="font-family: 'Space Grotesk', sans-serif; font-weight: 500;">
             </div>
             <div class="flex justify-end">
-                <button type="submit" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: #ffffff; background: var(--secondary); border: none; cursor: pointer;" onmouseover="this.style.background='#004d46'" onmouseout="this.style.background='#006a61'">
+                <button type="submit" class="pe-btn-primary">
                     Verify
                 </button>
             </div>
         </form>
     </div>
 
-    <div id="verify-result" class="mt-6">
+    <div id="verify-result" style="margin-top: 1.5rem;">
         {% if result %}
             {% include "partials/verify_result.html" %}
         {% elif error %}
