@@ -36,24 +36,7 @@ class CertificateCrudService:
         dto: GenerateCertificateInput,
         actor_name: Optional[str] = None,
     ) -> CertificateReadDTO:
-        """Generate a new certificate or return existing if duplicate."""
-        # Check for existing certificate (unique constraint)
-        existing = self._uow.certificates.get_by_unique_key(
-            student_name=dto.student_name,
-            course_track=dto.course_track,
-            issue_date=dto.issue_date,
-        )
-        if existing:
-            from fastapi import HTTPException
-            raise HTTPException(
-                status_code=409,
-                detail={
-                    "error": "ConflictError",
-                    "message": "Certificate already exists for this student/track/date",
-                    "cert_id": existing.cert_id,
-                },
-            )
-
+        """Generate a new certificate."""
         # Get track display name
         course_name = get_track_display_name(dto.course_track)
 
