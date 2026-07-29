@@ -5,7 +5,7 @@ Certificate domain models — SQLModel entities.
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from sqlalchemy import Column, Index, JSON, String, UniqueConstraint
+from sqlalchemy import Column, Index, JSON, String
 from sqlmodel import Field, SQLModel
 
 
