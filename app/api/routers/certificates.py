@@ -124,10 +124,13 @@ def download_pdf(
 ):
     """Download the certificate PDF. Returns HTML fallback on render failure."""
     cert = service.get_by_id(cert_id)
-    date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
+    if not cert:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Certificate not found")
+    date_str = cert.issue_date.strftime("%Y%m%d") if cert.issue_date else ""
     safe_name = _ascii_slug(cert.student_name, cert_id)
     safe_course = _ascii_slug(cert.course_name)
-    filename = f"{safe_name}_{safe_course}_{date_str}.pdf" if cert else f"{cert_id}.pdf"
+    filename = f"{safe_name}_{safe_course}_{date_str}.pdf"
 
     try:
         pdf_bytes = service.download_pdf(cert_id)
@@ -157,10 +160,13 @@ def download_html(
 ):
     """Download the certificate as a self-contained HTML file."""
     cert = service.get_by_id(cert_id)
-    date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
+    if not cert:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Certificate not found")
+    date_str = cert.issue_date.strftime("%Y%m%d") if cert.issue_date else ""
     safe_name = _ascii_slug(cert.student_name, cert_id)
     safe_course = _ascii_slug(cert.course_name)
-    filename = f"{safe_name}_{safe_course}_{date_str}.html" if cert else f"{cert_id}.html"
+    filename = f"{safe_name}_{safe_course}_{date_str}.html"
 
     html = service.download_html(cert_id)
     return HTMLResponse(
