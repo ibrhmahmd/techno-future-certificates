@@ -164,8 +164,6 @@ async def generate_result(
     level: str = Form(...),
     issue_date: str = Form(...),
     branch: str = Form(...),
-    instructor: str = Form(""),
-    director: str = Form(""),
 ):
     """HTMX partial: generate certificate via API and return result."""
     payload = {
@@ -175,10 +173,6 @@ async def generate_result(
         "issue_date": issue_date,
         "branch": branch,
     }
-    if instructor:
-        payload["instructor"] = instructor
-    if director:
-        payload["director"] = director
 
     cert = None
     error = None

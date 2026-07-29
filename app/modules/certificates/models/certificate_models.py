@@ -27,8 +27,6 @@ class Certificate(SQLModel, table=True):
     level: str = Field(nullable=False)
     issue_date: date = Field(nullable=False)
     branch: str = Field(nullable=False)
-    instructor: Optional[str] = Field(default=None, nullable=True)
-    director: Optional[str] = Field(default=None, nullable=True)
     custom_color: Optional[str] = Field(default=None, nullable=True)
     revoked_at: Optional[datetime] = Field(default=None, nullable=True)
     revoked_reason: Optional[str] = Field(default=None, nullable=True)

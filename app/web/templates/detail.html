@@ -33,14 +33,6 @@
             <dd style="font-size: 0.875rem; color: var(--on-background);">{{ cert.issue_date }}</dd>
             <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Branch</dt>
             <dd style="font-size: 0.875rem; color: var(--on-background);">{{ cert.branch }}</dd>
-            {% if cert.instructor %}
-            <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Instructor</dt>
-            <dd style="font-size: 0.875rem; color: var(--on-background);">{{ cert.instructor }}</dd>
-            {% endif %}
-            {% if cert.director %}
-            <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Director</dt>
-            <dd style="font-size: 0.875rem; color: var(--on-background);">{{ cert.director }}</dd>
-            {% endif %}
             <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Created</dt>
             <dd style="font-size: 0.875rem; color: var(--on-background);">{{ cert.created_at }}</dd>
             {% if cert.revoked_at %}

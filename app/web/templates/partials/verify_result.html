@@ -18,14 +18,6 @@
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.issue_date }}</dd>
         <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Branch</dt>
         <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.branch }}</dd>
-        {% if result.instructor %}
-        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Instructor</dt>
-        <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.instructor }}</dd>
-        {% endif %}
-        {% if result.director %}
-        <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Director</dt>
-        <dd style="font-size: 0.875rem; color: var(--on-background);">{{ result.director }}</dd>
-        {% endif %}
         {% if result.revoked %}
         <dt style="font-size: 0.75rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Revoked Reason</dt>
         <dd style="font-size: 0.875rem; color: var(--error);">{{ result.revoked_reason }}</dd>

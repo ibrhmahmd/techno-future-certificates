@@ -240,8 +240,6 @@ def _build_pdf_html(
     issue_date,
     branch: str,
     cert_id: str,
-    instructor: Optional[str],
-    director: Optional[str],
     accent: str,
     accent_light: str,
     company_b64: str,
@@ -282,27 +280,7 @@ def _build_pdf_html(
         if qr_b64 else ""
     )
 
-    # Signature blocks
-    sig_cells = ""
-    if instructor:
-        sig_cells += f"""
-        <td style="text-align:center; width:50%;">
-          <div style="width:130px; height:1px; background:{on_muted}; margin:0 auto 4px;"></div>
-          <div style="font-family:Inter,Arial,sans-serif; font-size:9pt; font-weight:bold; color:{on_bg};">{instructor}</div>
-          <div style="font-family:Inter,Arial,sans-serif; font-size:7.5pt; color:{on_muted};">Instructor</div>
-        </td>"""
-    if director:
-        sig_cells += f"""
-        <td style="text-align:center; width:50%;">
-          <div style="width:130px; height:1px; background:{on_muted}; margin:0 auto 4px;"></div>
-          <div style="font-family:Inter,Arial,sans-serif; font-size:9pt; font-weight:bold; color:{on_bg};">{director}</div>
-          <div style="font-family:Inter,Arial,sans-serif; font-size:7.5pt; color:{on_muted};">Academic Director</div>
-        </td>"""
-
-    sig_row = (
-        f'<table width="100%" style="margin-top:6px;"><tr>{sig_cells}</tr></table>'
-        if sig_cells else ""
-    )
+    sig_row = ""
 
     return f"""<!DOCTYPE html>
 <html>
@@ -512,8 +490,6 @@ def render_html(
     issue_date,
     branch: str,
     cert_id: str,
-    instructor: Optional[str] = None,
-    director: Optional[str] = None,
     custom_color: Optional[str] = None,
     verify_url: Optional[str] = None,
 ) -> str:
@@ -583,26 +559,6 @@ def render_html(
             f"}}</style>"
         )
 
-    # Signature blocks
-    instructor_sig = (
-        f'<div class="cert-signature">'
-        f'<div class="cert-signature-line"></div>'
-        f'<div class="cert-signature-name">{instructor}</div>'
-        f'<div class="cert-signature-role">Instructor</div>'
-        f'</div>'
-        if instructor
-        else ""
-    )
-    director_sig = (
-        f'<div class="cert-signature">'
-        f'<div class="cert-signature-line"></div>'
-        f'<div class="cert-signature-name">{director}</div>'
-        f'<div class="cert-signature-role">Academic Director</div>'
-        f'</div>'
-        if director
-        else ""
-    )
-
     # Load and fill template
     template_path = TEMPLATES_DIR / "certificate_template.html"
     if not template_path.exists():
@@ -621,8 +577,6 @@ def render_html(
         level=level,
         date_str=date_str,
         branch=branch,
-        instructor_sig=instructor_sig,
-        director_sig=director_sig,
         cert_id=cert_id,
     )
 
@@ -648,8 +602,6 @@ def render_pdf(
     issue_date,
     branch: str,
     cert_id: str,
-    instructor: Optional[str] = None,
-    director: Optional[str] = None,
     custom_color: Optional[str] = None,
     verify_url: Optional[str] = None,
 ) -> bytes:
@@ -667,8 +619,6 @@ def render_pdf(
         issue_date=issue_date,
         branch=branch,
         cert_id=cert_id,
-        instructor=instructor,
-        director=director,
         custom_color=custom_color,
         verify_url=verify_url,
     )

@@ -18,8 +18,6 @@ class GenerateCertificateInput(BaseModel):
     level: str
     issue_date: date
     branch: str
-    instructor: Optional[str] = None
-    director: Optional[str] = None
     custom_color: Optional[str] = None
 
     @field_validator("student_name")
@@ -94,8 +92,6 @@ class CertificateReadDTO(BaseModel):
     level: str
     issue_date: date
     branch: str
-    instructor: Optional[str]
-    director: Optional[str]
     custom_color: Optional[str]
     revoked_at: Optional[datetime]
     revoked_reason: Optional[str]
@@ -113,7 +109,5 @@ class CertificateVerifyDTO(BaseModel):
     level: str
     issue_date: date
     branch: str
-    instructor: Optional[str]
-    director: Optional[str]
     revoked: bool
     revoked_reason: Optional[str]

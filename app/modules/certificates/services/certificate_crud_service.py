@@ -69,8 +69,6 @@ class CertificateCrudService:
             level=dto.level,
             issue_date=dto.issue_date,
             branch=dto.branch,
-            instructor=dto.instructor,
-            director=dto.director,
             custom_color=dto.custom_color,
             created_at=datetime.now(timezone.utc),
         )
@@ -101,8 +99,6 @@ class CertificateCrudService:
             level=cert.level,
             issue_date=cert.issue_date,
             branch=cert.branch,
-            instructor=cert.instructor,
-            director=cert.director,
             revoked=cert.revoked_at is not None,
             revoked_reason=cert.revoked_reason,
         )
@@ -154,8 +150,6 @@ class CertificateCrudService:
             issue_date=cert.issue_date,
             branch=cert.branch,
             cert_id=cert.cert_id,
-            instructor=cert.instructor,
-            director=cert.director,
             custom_color=custom_color,
         )
 
@@ -175,8 +169,6 @@ class CertificateCrudService:
             issue_date=cert.issue_date,
             branch=cert.branch,
             cert_id=cert.cert_id,
-            instructor=cert.instructor,
-            director=cert.director,
             custom_color=custom_color,
         )
 
@@ -199,7 +191,7 @@ class CertificateCrudService:
         writer = csv.writer(output)
         writer.writerow([
             "cert_id", "student_name", "course_name", "level",
-            "issue_date", "branch", "instructor", "director", "created_at",
+            "issue_date", "branch", "created_at",
         ])
 
         for cert in items:
@@ -210,8 +202,6 @@ class CertificateCrudService:
                 cert.level,
                 cert.issue_date.isoformat(),
                 cert.branch,
-                cert.instructor or "",
-                cert.director or "",
                 cert.created_at.isoformat(),
             ])
 
