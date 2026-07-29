@@ -61,16 +61,23 @@ def create_app() -> FastAPI:
     @app.exception_handler(RequestValidationError)
     async def log_validation_error(request: Request, exc: RequestValidationError):
         body = await request.body()
+        errors = exc.errors()
         log.error(
             "422 — %s %s\n  Body: %s\n  Errors: %s",
             request.method,
             request.url.path,
             body.decode("utf-8", errors="replace"),
-            exc.errors(),
+            errors,
         )
+        # Sanitize errors for JSON serialization (ctx may contain non-serializable objects)
+        safe_errors = []
+        for err in errors:
+            safe = {k: v for k, v in err.items() if k != "ctx"}
+            safe["msg"] = str(err.get("msg", ""))
+            safe_errors.append(safe)
         return JSONResponse(
             status_code=422,
-            content={"detail": exc.errors()},
+            content={"detail": safe_errors},
         )
 
     # Routers
