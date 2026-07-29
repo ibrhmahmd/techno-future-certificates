@@ -3,6 +3,7 @@ Certificate API endpoints.
 """
 
 import logging
+import re
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -22,6 +23,13 @@ from app.modules.certificates.services.certificate_crud_service import Certifica
 from app.database import get_db
 
 log = logging.getLogger(__name__)
+
+
+def _ascii_slug(text: str, default: str = "") -> str:
+    """Strip non-Latin-1 chars for safe Content-Disposition filenames."""
+    clean = re.sub(r"[^\x00-\xFF]", "", text).strip()
+    return clean.replace(" ", "_") if clean else default
+
 
 router = APIRouter(tags=["Certificates"])
 
@@ -117,8 +125,8 @@ def download_pdf(
     """Download the certificate PDF. Returns HTML fallback on render failure."""
     cert = service.get_by_id(cert_id)
     date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
-    safe_name = (cert.student_name.replace(" ", "_") if cert else cert_id)
-    safe_course = (cert.course_name.replace(" ", "_") if cert else "")
+    safe_name = _ascii_slug(cert.student_name, cert_id)
+    safe_course = _ascii_slug(cert.course_name)
     filename = f"{safe_name}_{safe_course}_{date_str}.pdf" if cert else f"{cert_id}.pdf"
 
     try:
@@ -150,8 +158,8 @@ def download_html(
     """Download the certificate as a self-contained HTML file."""
     cert = service.get_by_id(cert_id)
     date_str = cert.issue_date.strftime("%Y%m%d") if cert and cert.issue_date else ""
-    safe_name = (cert.student_name.replace(" ", "_") if cert else cert_id)
-    safe_course = (cert.course_name.replace(" ", "_") if cert else "")
+    safe_name = _ascii_slug(cert.student_name, cert_id)
+    safe_course = _ascii_slug(cert.course_name)
     filename = f"{safe_name}_{safe_course}_{date_str}.html" if cert else f"{cert_id}.html"
 
     html = service.download_html(cert_id)
