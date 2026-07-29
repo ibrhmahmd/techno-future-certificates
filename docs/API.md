@@ -29,8 +29,8 @@ Create a new course completion certificate.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `student_name` | string | yes | Full name of the student |
-| `course_track` | string | yes | Track key (see list below) |
-| `level` | string | yes | Level `"1"`, `"2"`, or `"3"` |
+| `course_track` | string | yes | Track name (free text) |
+| `level` | string | yes | Level (free text, e.g. `"1"`, `"Junior"`, `"Level 1"`) |
 | `issue_date` | string (date) | yes | Issue date in `YYYY-MM-DD` format |
 | `branch` | string | yes | Branch name (e.g. "Heliopolis") |
 | `custom_color` | string (hex) | no | Override accent color (e.g. `#FF0000`) |

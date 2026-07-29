@@ -66,8 +66,8 @@ def generate_cert_id(course_track: str, issue_date: date) -> str:
     """
     Generate a unique certificate ID.
     Format: TKTF-{TRACK_PREFIX}-{YYYYMMDD}-{4HEX}
+    Falls back to prefix 'GEN' for unknown tracks.
     """
-    # Find prefix from track key
     prefix = None
     for name, key in TRACK_KEYS.items():
         if key == course_track:
@@ -75,7 +75,7 @@ def generate_cert_id(course_track: str, issue_date: date) -> str:
             break
 
     if prefix is None:
-        raise ValueError(f"Unknown track key: {course_track}")
+        prefix = "GEN"
 
     date_str = issue_date.strftime("%Y%m%d")
     hex_suffix = "".join(random.choices(string.hexdigits[:16], k=4)).upper()
@@ -84,11 +84,11 @@ def generate_cert_id(course_track: str, issue_date: date) -> str:
 
 
 def get_track_display_name(track_key: str) -> str:
-    """Get the display name for a track key."""
+    """Get the display name for a track key. Returns the raw key if unknown."""
     for name, key in TRACK_KEYS.items():
         if key == track_key:
             return name
-    raise ValueError(f"Unknown track key: {track_key}")
+    return track_key
 
 
 def get_track_color(track_key: str, custom_color: str | None = None) -> str:
@@ -96,4 +96,4 @@ def get_track_color(track_key: str, custom_color: str | None = None) -> str:
     if custom_color and validate_hex_color(custom_color):
         return custom_color
     colors = TRACK_COLORS.get(track_key)
-    return colors[0] if colors else "#333333"
+    return colors[0] if colors else "#1a73e8"

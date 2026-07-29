@@ -33,7 +33,7 @@
                 </div>
                 <div>
                     <label class="pe-input-label">Level *</label>
-                    <input type="text" name="level" required class="pe-input" placeholder="1, 2, or 3" inputmode="numeric" pattern="[1-3]">
+                    <input type="text" name="level" required class="pe-input" placeholder="e.g. Level 1, Junior, 1">
                 </div>
             </div>
 
@@ -62,12 +62,5 @@
 
 <script>
     document.getElementById('issue-date').value = new Date().toISOString().split('T')[0];
-
-    document.getElementById('gen-form').addEventListener('htmx:configRequest', function (e) {
-        var levelInput = document.querySelector('[name="level"]');
-        var num = parseInt(levelInput.value, 10);
-        var levels = { 1: 'Level 1 — Junior', 2: 'Level 2 — Intermediate', 3: 'Level 3 — Advanced' };
-        if (levels[num]) levelInput.value = levels[num];
-    });
 </script>
 {% endblock %}
