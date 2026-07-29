@@ -30,18 +30,23 @@ class GenerateCertificateInput(BaseModel):
     @field_validator("course_track")
     @classmethod
     def validate_course_track(cls, v: str) -> str:
-        if v not in TRACK_KEYS.values():
-            valid = ", ".join(sorted(TRACK_KEYS.values()))
-            raise ValueError(f"Invalid track. Must be one of: {valid}")
-        return v
+        if v in TRACK_KEYS.values():
+            return v
+        if v in TRACK_KEYS:
+            return TRACK_KEYS[v]
+        valid = ", ".join(sorted(TRACK_KEYS.values()))
+        raise ValueError(f"Invalid track. Must be one of: {valid}")
 
     @field_validator("level")
     @classmethod
     def validate_level(cls, v: str) -> str:
-        if v not in LEVELS:
-            valid = ", ".join(LEVELS)
-            raise ValueError(f"Invalid level. Must be one of: {valid}")
-        return v
+        mapping = {"1": "Level 1 — Junior", "2": "Level 2 — Intermediate", "3": "Level 3 — Advanced"}
+        if v in mapping:
+            return mapping[v]
+        if v in LEVELS:
+            return v
+        valid = ", ".join(LEVELS)
+        raise ValueError(f"Invalid level. Must be '1', '2', '3' or one of: {valid}")
 
     @field_validator("issue_date")
     @classmethod

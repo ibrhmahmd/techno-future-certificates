@@ -30,11 +30,9 @@ Create a new course completion certificate.
 |-------|------|----------|-------------|
 | `student_name` | string | yes | Full name of the student |
 | `course_track` | string | yes | Track key (see list below) |
-| `level` | string | yes | Level string (see list below) |
+| `level` | string | yes | Level `"1"`, `"2"`, or `"3"` |
 | `issue_date` | string (date) | yes | Issue date in `YYYY-MM-DD` format |
 | `branch` | string | yes | Branch name (e.g. "Heliopolis") |
-| `instructor` | string | no | Instructor name |
-| `director` | string | no | Academic director name |
 | `custom_color` | string (hex) | no | Override accent color (e.g. `#FF0000`) |
 
 ### Valid Track Keys
@@ -57,9 +55,9 @@ Create a new course completion certificate.
 
 ### Valid Levels
 
-- `Level 1 — Junior`
-- `Level 2 — Intermediate`
-- `Level 3 — Advanced`
+- `"1"` — mapped to `Level 1 — Junior`
+- `"2"` — mapped to `Level 2 — Intermediate`
+- `"3"` — mapped to `Level 3 — Advanced`
 
 ### Example
 
@@ -67,11 +65,10 @@ Create a new course completion certificate.
 {
   "student_name": "Ahmed Mohamed",
   "course_track": "html",
-  "level": "Level 1 — Junior",
+  "level": "1",
   "issue_date": "2026-07-28",
   "branch": "Heliopolis",
-  "instructor": "Sara Ali",
-  "director": "Khaled Hassan"
+  "custom_color": null
 }
 ```
 
@@ -89,8 +86,6 @@ Create a new course completion certificate.
     "level": "Level 1 — Junior",
     "issue_date": "2026-07-28",
     "branch": "Heliopolis",
-    "instructor": "Sara Ali",
-    "director": "Khaled Hassan",
     "custom_color": null,
     "revoked_at": null,
     "revoked_reason": null,
@@ -139,8 +134,6 @@ Paginated list of certificates with optional filters.
       "level": "Level 1 — Junior",
       "issue_date": "2026-07-28",
       "branch": "Heliopolis",
-      "instructor": "Sara Ali",
-      "director": "Khaled Hassan",
       "custom_color": null,
       "revoked_at": null,
       "revoked_reason": null,
@@ -175,8 +168,6 @@ No auth required. Returns certificate details or `404`.
     "level": "Level 1 — Junior",
     "issue_date": "2026-07-28",
     "branch": "Heliopolis",
-    "instructor": "Sara Ali",
-    "director": "Khaled Hassan",
     "revoked": false,
     "revoked_reason": null
   },
@@ -323,8 +314,6 @@ TKTF-{TRACK_PREFIX}-{YYYYMMDD}-{XXXX}
 | `level` | string | Level enum string |
 | `issue_date` | date | YYYY-MM-DD |
 | `branch` | string | Branch location |
-| `instructor` | string or null | |
-| `director` | string or null | |
 | `custom_color` | string or null | Hex color override |
 | `revoked_at` | datetime or null | |
 | `revoked_reason` | string or null | |
@@ -340,7 +329,5 @@ TKTF-{TRACK_PREFIX}-{YYYYMMDD}-{XXXX}
 | `level` | string | |
 | `issue_date` | date | |
 | `branch` | string | |
-| `instructor` | string or null | |
-| `director` | string or null | |
 | `revoked` | bool | |
 | `revoked_reason` | string or null | |
